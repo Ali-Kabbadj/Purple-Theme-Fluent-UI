@@ -2,29 +2,14 @@ import * as vscode from "vscode";
 import {
   activate_vscode_custom_ui_injector,
   deactivate_vscode_custom_ui_injector,
-} from "./vscode-custom-ui-injector/base";
+} from "./core/base";
 import { THEME_NAME } from "./utils/constants";
 
 export async function activate(context: vscode.ExtensionContext) {
   if (context.extensionMode === vscode.ExtensionMode.Development) {
-    console.log('Yeey!! Theme Editor Pro is live! 💜');
-    await vscode.commands.executeCommand("workbench.action.toggleDevTools");
+    console.log("Yeey!! Theme Editor Pro is live! 💜");
+    // await vscode.commands.executeCommand("workbench.action.toggleDevTools");
   }
-
-  // In extension.ts
-  vscode.workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration("workbench.colorTheme")) {
-      const currentTheme = vscode.workspace
-        .getConfiguration("workbench")
-        .get<string>("colorTheme");
-      context.globalState.update(
-        "themeEnabled",
-        currentTheme === "Purple Theme Fluent-UI",
-      );
-    }
-  });
-
-  const config = vscode.workspace.getConfiguration("workbench");
 
   activate_vscode_custom_ui_injector(context);
 }

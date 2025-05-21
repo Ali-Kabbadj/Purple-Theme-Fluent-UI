@@ -1,6 +1,6 @@
 {
   "name": "theme-editor-pro",
-  "displayName": "Theme Editor Pro (CSS/JS Injection + Hot Reload)",
+  "displayName": "Theme Editor Pro (CSS/JS Injection + Hot Reload + fluent-ui-ish intergrated theme)",
   "publisher": "Ali-Kabbadj",
   "description": "An extention that comes with a defautl purple theme, adds a section to the sidebar for easy access to enabling/disabling features, direct open of custom css and js, live hot reload, focused on ease of use and user experience, the idea is to have an all in one sidebar section to edit the theme and prompts the user to hot reload as soon as a change in the custom css or js is detected.",
   "version": "0.0.1",
@@ -78,22 +78,7 @@
         "title": "Disable Purple Fluent UI Theme",
         "category": "Purple Fluent UI"
       }
-    ],
-    "configuration": {
-      "title": "Custom CSS/JS Configuration",
-      "properties": {
-        "vscode_custom_css.imports": {
-          "description": "Custom CSS/JS files, as an array of URLs, not file paths",
-          "type": "array",
-          "default": []
-        },
-        "vscode_custom_css.statusbar": {
-          "description": "Enable Status Indicator",
-          "type": "boolean",
-          "default": true
-        }
-      }
-    }
+    ]
   },
   "icon": "resources/images/icon.png",
   "scripts": {

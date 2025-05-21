@@ -444,18 +444,3 @@ export class CustomUiSidebarProvider implements vscode.WebviewViewProvider {
     </html>`;
   }
 }
-
-/**
- * Check if custom CSS is currently installed by examining the workbench.html file
- */
-export async function isCustomCssInstalled(
-  htmlFilePath: string,
-): Promise<boolean> {
-  try {
-    const htmlContent = await fs.promises.readFile(htmlFilePath, "utf-8");
-    return htmlContent.includes("<!-- !! VSCODE-CUSTOM-CSS-START !! -->");
-  } catch (e) {
-    console.error("Error checking if custom CSS is installed:", e);
-    return false;
-  }
-}
