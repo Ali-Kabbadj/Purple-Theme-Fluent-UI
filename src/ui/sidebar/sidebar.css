@@ -1,0 +1,30 @@
+/* Sidebar styles */
+body {
+  padding: 12px;
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+button {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

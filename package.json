@@ -1,0 +1,129 @@
+{
+  "name": "theme-editor-pro",
+  "displayName": "Theme Editor Pro (CSS/JS Injection + Hot Reload)",
+  "publisher": "Ali-Kabbadj",
+  "description": "An extention that comes with a defautl purple theme, adds a section to the sidebar for easy access to enabling/disabling features, direct open of custom css and js, live hot reload, focused on ease of use and user experience, the idea is to have an all in one sidebar section to edit the theme and prompts the user to hot reload as soon as a change in the custom css or js is detected.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ali-Kabbadj/VS-Theme-Editor-Pro"
+  },
+  "bugs": {
+    "url": "https://github.com/Ali-Kabbadj/VS-Theme-Editor-Pro/issues"
+  },
+  "categories": [
+    "Other",
+    "Themes"
+  ],
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "views": {
+      "custom-ui-container": [
+        {
+          "id": "customUiSidebar",
+          "name": "Purple Fluent UI",
+          "icon": "resources/images/icon.svg",
+          "type": "webview"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "custom-ui-container",
+          "title": "Purple Fluent UI",
+          "icon": "resources/images/icon.svg"
+        }
+      ]
+    },
+    "themes": [
+      {
+        "label": "Purple Theme Fluent-UI",
+        "uiTheme": "vs-dark",
+        "path": "./themes/purple-fluent-ui-color-theme.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "theme-editor-pro.installCssJsInjection",
+        "title": "Enable CSS/JS Injection",
+        "category": "Purple Fluent UI"
+      },
+      {
+        "command": "theme-editor-pro.uninstallCssJsInjection",
+        "title": "Disable CSS/JS Injection",
+        "category": "Purple Fluent UI"
+      },
+      {
+        "command": "theme-editor-pro.updateCssJsInjection",
+        "title": "Update CSS/JS Injection",
+        "category": "Purple Fluent UI"
+      },
+      {
+        "command": "theme-editor-pro.enableTheme",
+        "title": "Enable Purple Fluent UI Theme",
+        "category": "Purple Fluent UI"
+      },
+      {
+        "command": "theme-editor-pro.disableTheme",
+        "title": "Disable Purple Fluent UI Theme",
+        "category": "Purple Fluent UI"
+      }
+    ],
+    "configuration": {
+      "title": "Custom CSS/JS Configuration",
+      "properties": {
+        "vscode_custom_css.imports": {
+          "description": "Custom CSS/JS files, as an array of URLs, not file paths",
+          "type": "array",
+          "default": []
+        },
+        "vscode_custom_css.statusbar": {
+          "description": "Enable Status Indicator",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    }
+  },
+  "icon": "resources/images/icon.png",
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "dependencies": {
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.100.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.15.21",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.25.1",
+    "esbuild": "^0.25.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.3",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
