@@ -95,7 +95,7 @@ code --install-extension Ali-Kabbadj.theme-editor-pro
 ## 🎯 **Quick Start Guide**
 
 ### **Step 1: Open the Sidebar**
-Look for the **Theme Editor Pro** icon in your activity bar: <img src="resources/images/icon-sidebar.svg" alt="Sidebar Icon" width="14" height="14">
+Look for the **Theme Editor Pro** icon in your activity bar: <img src="resources/images/icon.png" alt="Sidebar Icon" width="14" height="14">
 
 ### **Step 2: Enable Features**
 Use the intuitive checkboxes to enable:
