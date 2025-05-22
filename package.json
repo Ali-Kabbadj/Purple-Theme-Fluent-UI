@@ -31,7 +31,7 @@
         {
           "id": "customUiSidebar",
           "name": "Theme Editor Pro",
-          "icon": "resources/images/icon.svg",
+          "icon": "resources/images/icon-sidebar.svg",
           "type": "webview"
         }
       ]
@@ -41,7 +41,7 @@
         {
           "id": "custom-ui-container",
           "title": "Theme Editor Pro",
-          "icon": "resources/images/icon.svg"
+          "icon": "resources/images/icon-sidebar.svg"
         }
       ]
     },
