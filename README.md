@@ -24,16 +24,11 @@
 
 Transform your coding environment with real-time customization capabilities and experience the perfect blend of aesthetics and functionality.
 
-<details>
-<summary>🎯 <strong>Perfect for developers who want...</strong></summary>
+---
 
-- 🎨 **Complete control** over their VS Code appearance
-- ⚡ **Real-time feedback** with hot reload functionality  
-- 🎪 **Beautiful, modern themes** with Fluent UI integration
-- 🔧 **Easy-to-use interface** for theme management
-- 🚀 **Professional workflow** enhancement
-
-</details>
+|                                                                         |                                                                         |
+| :---------------------------------------------------------------------: | :---------------------------------------------------------------------: |
+| <img src="screenshots/Screenshot_1.png" alt="Theme Editor Pro Banner" > | <img src="screenshots/Screenshot_2.png" alt="Theme Editor Pro Banner" > |
 
 ---
 
@@ -41,8 +36,8 @@ Transform your coding environment with real-time customization capabilities and 
 
 <div align="center">
 
-| 🎨 **Custom Theming** | ⚡ **Live Reload** | 🎪 **Fluent UI** | 🔧 **Easy Management** |
-|:---:|:---:|:---:|:---:|
+|           🎨 **Custom Theming**            |             ⚡ **Live Reload**              |            🎪 **Fluent UI**            |        🔧 **Easy Management**        |
+| :----------------------------------------: | :-----------------------------------------: | :------------------------------------: | :----------------------------------: |
 | Inject custom CSS/JS directly into VS Code | Instant updates when you modify theme files | Beautiful purple Fluent UI integration | Intuitive sidebar for all operations |
 
 </div>
@@ -50,16 +45,19 @@ Transform your coding environment with real-time customization capabilities and 
 ### 🔥 **Core Capabilities**
 
 - **🎨 CSS/JS Injection System**
+
   - Directly modify VS Code's appearance with custom CSS
   - Add custom JavaScript for enhanced functionality
   - Secure backup and restore system
 
 - **⚡ Hot Reload Technology**
+
   - Real-time updates on file save
   - Auto-detection of theme file changes
   - Instant preview of modifications
 
 - **🎪 Purple Fluent UI Theme**
+
   - Professionally designed purple color scheme
   - Fluent UI integration for modern aesthetics
   - Optimized for long coding sessions
@@ -73,18 +71,21 @@ Transform your coding environment with real-time customization capabilities and 
 
 ## 🚀 **Installation**
 
-### **Option 1: VS Code Marketplace** *(Recommended)*
+### **Option 1: VS Code Marketplace** _(Recommended)_
+
 1. Open VS Code
 2. Go to Extensions (`Ctrl+Shift+X`)
 3. Search for **"Theme Editor Pro"**
 4. Click **Install**
 
 ### **Option 2: Command Line**
+
 ```bash
 code --install-extension Ali-Kabbadj.theme-editor-pro
 ```
 
 ### **Option 3: Manual Installation**
+
 1. Download the `.vsix` file from [GitHub Releases](https://github.com/Ali-Kabbadj/VS-Theme-Editor-Pro/releases)
 2. Open VS Code
 3. Press `Ctrl+Shift+P` → Type "Extensions: Install from VSIX"
@@ -95,14 +96,18 @@ code --install-extension Ali-Kabbadj.theme-editor-pro
 ## 🎯 **Quick Start Guide**
 
 ### **Step 1: Open the Sidebar**
+
 Look for the **Theme Editor Pro** icon in your activity bar: <img src="resources/images/icon.png" alt="Sidebar Icon" width="14" height="14">
 
 ### **Step 2: Enable Features**
+
 Use the intuitive checkboxes to enable:
+
 - ✅ **Purple Fluent UI Theme**
 - ✅ **CSS/JS Injection**
 
 ### **Step 3: Customize**
+
 - Click **"Open Custom CSS File"** to start styling
 - Click **"Open Custom JS File"** for advanced customization
 - Changes are applied instantly with hot reload!
@@ -113,16 +118,18 @@ Use the intuitive checkboxes to enable:
 
 <div align="center">
 
-*Experience the perfect harmony of purple aesthetics and modern Fluent UI design*
+_Experience the perfect harmony of purple aesthetics and modern Fluent UI design_
 
 </div>
 
 ### **🌈 Color Palette**
+
 - **Primary Purple**: `#bc47ffdd` - Main accent color
-- **Dark Background**: `#42304c` - Title bars and panels  
+- **Dark Background**: `#42304c` - Title bars and panels
 - **Deep Purple**: `#2D1B3D` - Sidebar and secondary elements
 
 ### **🎪 Theme Features**
+
 - **Modern Fluent UI Integration** - Seamless Microsoft Fluent design language
 - **Eye-friendly Purple Tones** - Optimized for extended coding sessions
 - **High Contrast Elements** - Perfect readability in all lighting conditions
@@ -137,23 +144,28 @@ Use the intuitive checkboxes to enable:
 ```css
 /* Glowing cursor effect */
 .monaco-editor .cursor {
-    box-shadow: 0 0 10px #bc47ff;
+  box-shadow: 0 0 10px #bc47ff;
 }
 
 /* Animated brackets */
 .bracket-highlighting-0 {
-    color: #bc47ff !important;
-    animation: pulse 2s infinite;
+  color: #bc47ff !important;
+  animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Custom scrollbar */
 .monaco-scrollable-element .scrollbar {
-    background: linear-gradient(45deg, #bc47ff, #9945FF);
+  background: linear-gradient(45deg, #bc47ff, #9945ff);
 }
 ```
 
@@ -161,11 +173,11 @@ Use the intuitive checkboxes to enable:
 
 ```javascript
 // Custom welcome message
-console.log('🎨 Theme Editor Pro Activated!');
+console.log("🎨 Theme Editor Pro Activated!");
 
 // Add custom functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Your custom VS Code enhancements here
+document.addEventListener("DOMContentLoaded", function () {
+  // Your custom VS Code enhancements here
 });
 ```
 
@@ -174,12 +186,14 @@ document.addEventListener('DOMContentLoaded', function() {
 ## 🛠️ **Commands & Usage**
 
 ### **Available Commands**
+
 - `theme-editor-pro.enableTheme` - Enable Purple Fluent UI Theme
-- `theme-editor-pro.disableTheme` - Disable Purple Fluent UI Theme  
+- `theme-editor-pro.disableTheme` - Disable Purple Fluent UI Theme
 - `theme-editor-pro.installCssJsInjection` - Enable CSS/JS Injection
 - `theme-editor-pro.uninstallCssJsInjection` - Disable CSS/JS Injection
 
 ### **Keyboard Shortcuts**
+
 You can assign custom keyboard shortcuts via:
 `File → Preferences → Keyboard Shortcuts`
 
@@ -190,18 +204,21 @@ You can assign custom keyboard shortcuts via:
 <div align="center">
 
 ### 🔐 **Administrator Privileges Required**
-*For CSS/JS injection to work properly*
+
+_For CSS/JS injection to work properly_
 
 </div>
 
 > **💡 Pro Tip**: Always run VS Code as administrator when using theme customization features. This ensures proper access to VS Code's core files for injection.
 
 ### **🔄 Restart Recommendations**
+
 - Enable features **one at a time** for stability
 - Restart VS Code after major changes
 - Use the built-in backup system for safety
 
 ### **📁 File Management**
+
 - Custom files are automatically created and managed
 - Use the reset buttons (⟲) to clear file contents
 - All changes are backed up automatically
@@ -213,36 +230,25 @@ You can assign custom keyboard shortcuts via:
 We welcome contributions! Here's how you can help:
 
 ### **🐛 Bug Reports**
+
 Found a bug? [Create an issue](https://github.com/Ali-Kabbadj/VS-Theme-Editor-Pro/issues) with:
+
 - Detailed description
 - Steps to reproduce
 - VS Code version
 - Operating system
 
 ### **💡 Feature Requests**
+
 Have an idea? [Open a discussion](https://github.com/Ali-Kabbadj/VS-Theme-Editor-Pro/discussions) and let's talk!
 
 ### **🔧 Development**
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
-
----
-
-## 📊 **Compatibility**
-
-| VS Code Version | Support Status | Notes |
-|:---:|:---:|:---|
-| **1.100.0+** | ✅ Full Support | Recommended |
-| **1.95.0-1.99.x** | ⚠️ Limited | Some features may not work |
-| **< 1.95.0** | ❌ Not Supported | Please update VS Code |
-
-### **🖥️ Platform Support**
-- ✅ **Windows** (Tested)
-- ✅ **macOS** (Tested)  
-- ✅ **Linux** (Tested)
 
 ---
 
@@ -252,21 +258,25 @@ Have an idea? [Open a discussion](https://github.com/Ali-Kabbadj/VS-Theme-Editor
 <summary><strong>❓ Common Issues & Solutions</strong></summary>
 
 ### **CSS/JS Injection Not Working**
+
 - ✅ Ensure VS Code is running as administrator
 - ✅ Check if backup was created successfully
 - ✅ Restart VS Code after enabling injection
 
 ### **Theme Not Applying**
+
 - ✅ Verify Fluent UI extension is installed
 - ✅ Check VS Code theme settings
 - ✅ Try disabling/re-enabling the theme
 
 ### **Hot Reload Not Triggering**
+
 - ✅ Save the file manually
 - ✅ Check file watcher permissions
 - ✅ Restart the extension
 
 ### **Backup/Restore Issues**
+
 - ✅ Run VS Code as administrator
 - ✅ Check file system permissions
 - ✅ Verify backup files exist
@@ -301,6 +311,6 @@ If you find Theme Editor Pro helpful, please consider:
 
 **Made with 💜 by [Ali Kabbadj](https://github.com/Ali-Kabbadj)**
 
-*Transform your coding experience with Theme Editor Pro!*
+_Transform your coding experience with Theme Editor Pro!_
 
 </div>
