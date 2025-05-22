@@ -7,6 +7,7 @@ import * as Url from "url";
 import * as os from "os";
 import { globals } from "../lib/globales";
 import { Helper } from "../lib/interfaces";
+import { FetchInternalCss } from "./InternalThemeStyles/internalCss";
 
 export const helper: Helper = {
   uninstallCssJsInjector: async () => {
@@ -304,8 +305,9 @@ export const helper: Helper = {
     try {
       parsed = helper.parsedUrl(url) as unknown as URL;
       const fetched = await helper.getContent(parsed);
+      const internalFetched = await FetchInternalCss();
       if (ext === ".css") {
-        return `<style>${fetched}</style>`;
+        return `<style> ${internalFetched} ${fetched} </style>`;
       } else if (ext === ".js") {
         return `<script>${fetched}</script>`;
       }
@@ -416,25 +418,17 @@ export const helper: Helper = {
       "custom.js",
     );
 
-    // const extensionWatcherRoot = globals.context.extensionPath;
-    // const injectorWatcherPath = path.join(
-    //   extensionWatcherRoot,
-    //   "resources",
-    //   "customs",
-    // );
-    const extensionWatcherRoot =
-      globals.context?.extensionPath ?? extensionUri.fsPath;
-    const injectorWatcherPath = path.join(
-      extensionWatcherRoot,
-      "resources",
-      "customs",
-    );
+    const resourcesPath = path.join(extensionUri.fsPath, "resources");
+
+    const imagesPath = path.join(extensionUri.fsPath, "resources", "images");
 
     let tempConfig: VSCodeCustomCssConfig = {
       imports: [cssUri, jsUri],
       extensionUri: extensionUri,
       cssUri: cssUri,
       jsUri: jsUri,
+      resourcesPath: resourcesPath,
+      imagesPath: imagesPath,
     };
     console.info("config initialized:", globals.extentionConfig);
     globals.extentionConfig = tempConfig;

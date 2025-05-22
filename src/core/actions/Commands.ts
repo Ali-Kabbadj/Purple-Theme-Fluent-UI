@@ -163,6 +163,7 @@ export async function resetCustomThemeSettingsVerbose() {
 export async function cmdtoggleThemes(enable: boolean): Promise<void> {
   const config = vscode.workspace.getConfiguration("workbench");
   const currentTheme = config.get<string>("colorTheme");
+  const cssJsInjectorInstalled = await globals.isCustomCssJSInstalled();
 
   // 1) Ensure extension is installed
   if (enable && !vscode.extensions.getExtension(FLUENT_UI_EXT_ID)) {
@@ -197,6 +198,9 @@ export async function cmdtoggleThemes(enable: boolean): Promise<void> {
       vscode.ConfigurationTarget.Global,
     );
     globals.sidebarUiProvider?.updatePurpleThemeFuientUIStatus(false);
+    if (cssJsInjectorInstalled) {
+      cmdInstallCssJsInjector();
+    }
   }
 
   // 2) Enable or disable Fluent UI

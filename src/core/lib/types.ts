@@ -14,7 +14,7 @@ export type Globals = {
   purpleThemeFluentUIThemeStatus: boolean;
   init: (context: vscode.ExtensionContext) => void;
   isCustomCssJSInstalled: () => Promise<boolean>;
-  initWatchers:() => Promise<void>;
+  initWatchers: () => Promise<void>;
 };
 
 export interface VSCodeCustomCssConfig {
@@ -22,4 +22,6 @@ export interface VSCodeCustomCssConfig {
   extensionUri: vscode.Uri;
   cssUri: string;
   jsUri: string;
+  resourcesPath: string;
+  imagesPath: string;
 }

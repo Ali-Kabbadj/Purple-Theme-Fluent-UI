@@ -30,7 +30,7 @@
       "custom-ui-container": [
         {
           "id": "customUiSidebar",
-          "name": "Purple Fluent UI",
+          "name": "Theme Editor Pro",
           "icon": "resources/images/icon.svg",
           "type": "webview"
         }
@@ -40,7 +40,7 @@
       "activitybar": [
         {
           "id": "custom-ui-container",
-          "title": "Purple Fluent UI",
+          "title": "Theme Editor Pro",
           "icon": "resources/images/icon.svg"
         }
       ]

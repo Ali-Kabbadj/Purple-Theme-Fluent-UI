@@ -169,7 +169,7 @@ export class SidebarUiProvider implements vscode.WebviewViewProvider {
           background-color: var(--vscode-button-background);
           color: var(--vscode-button-foreground);
           border: none;
-          border-radius: 4px;
+          border-radius: 8px;
           cursor: pointer;
           font-size: 13px;
           font-weight: 500;
@@ -212,17 +212,19 @@ export class SidebarUiProvider implements vscode.WebviewViewProvider {
         .checkbox-container input {
           margin-right: 8px;
         }
-        .file-status {
+        .note {
           font-size: 12px;
           margin-top: 2px;
           color: var(--vscode-descriptionForeground);
         }
-        .file-status.error {
-          color: var(--vscode-errorForeground);
+        .note-important {
+          font-size: 12px;
+          margin-top: 2px;
+          color: red;
         }
         .section {
-          border: 1px solid var(--vscode-panel-border);
-          border-radius: 4px;
+          border: 1px solid var(--vscode-foreground);
+          border-radius: 8px;
           padding: 12px;
           margin-bottom: 16px;
         }
@@ -238,30 +240,48 @@ export class SidebarUiProvider implements vscode.WebviewViewProvider {
     <body>
       <div class="container">
         <div class="section">
+          <div class="note">⚠️ IMPORTANT INSTRUCTIONS:</div>
+            <div class="note-important">
+            🎯 Its best to enable one at a time and restart as to not mess up the workbench.html, should be handled by default but just in case.
+            </div>
+            <div class="note-important">
+          🎯 Make sure to run vscode with administrator privileges whenever you want to edit something, overiding the default     workbench.html requires it.
+          </div>
+        </div>
+        <div class="section">
           <div class="checkbox-container">
             <input type="checkbox" id="toggleThemeEnabled" ${
               this._isThemeEnabled ? "checked" : ""
             } />
-            <label for="toggleThemeEnabled">Enable Purple Fluent UI Theme</label>
+            <label for="toggleThemeEnabled">${
+              this._isThemeEnabled ? "Disable" : "Enable"
+            } Purple Fluent UI Theme</label>
           </div>
-          <div class="file-status">
+          <div class="note">
             Toggle to enable/disable the Purple Fluent UI color theme.
           </div>
         </div>
 
         <div class="section">
-          <div class="section-title">Custom CSS/JS Injection</div>
           <div class="checkbox-container">
             <input type="checkbox" id="toggleInjectionEnabled" ${
               this._isInjectionEnabled ? "checked" : ""
             } />
-            <label for="toggleInjectionEnabled">Enable CSS/JS Injection</label>
+            <label for="toggleInjectionEnabled">${
+              this._isInjectionEnabled ? "Disable" : "Enable"
+            }} CSS/JS Injection</label>
           </div>
-          <div class="file-status">
-            Toggle to enable injection of your custom CSS/JS. Changes will reload the window.
+          <div class="note">
+            Toggle to enable injection of your custom CSS/JS.
           </div>
           <div>
             <fieldset ${!this._isInjectionEnabled ? "disabled" : ""}>
+              <div class="note">
+                Open and Edit the custom CSS/JS files below, it will auto prompt you to restart when a change is detected in those files one save, or instantly if you have autosave enabled.
+              </div>
+              <div class="note">
+                Use the refresh buttons to reset the files.
+              </div>
               <div class="button-row">
                 <button class="button main-button" id="openCssBtn" ${
                   !cssExists ? "disabled" : ""

@@ -151,8 +151,8 @@ export const globals: Globals = {
       return false;
     }
   },
-  async initWatchers(){
-      if (this.extentionConfig && await this.isCustomCssJSInstalled()) {
+  async initWatchers() {
+    if (this.extentionConfig && (await this.isCustomCssJSInstalled())) {
       try {
         fs.watch(
           this.extentionConfig.cssUri,
@@ -190,5 +190,5 @@ export const globals: Globals = {
       );
     }
     console.info("custom css/js watcher initialized");
-  }
+  },
 };

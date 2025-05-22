@@ -1,4 +1,4 @@
- .tab.active {
+/* .tab.active {
   box-shadow: inset -3em 3em #00000036, 0 0 0 0px #00000036,
     0.3em 0.3em 1em hsla(0, 0%, 0%, 0.212) !important;
 }
@@ -10,7 +10,7 @@
 
 .monaco-editor .sticky-line-content {
   background-color: black;
-}
+} */
 
 /* .monaco-workbench
   .part.editor
@@ -24,11 +24,11 @@
   border-top-right-radius: 10px;
 } */
 
-.monaco-breadcrumbs .monaco-breadcrumb-item .codicon-breadcrumb-separator {
+/* .monaco-breadcrumbs .monaco-breadcrumb-item .codicon-breadcrumb-separator {
   color: var(--vscode-icon-foreground);
-} 
+}
 
- .monaco-inputbox,
+.monaco-inputbox,
 .monaco-selectbox,
 .settings-editor
   > .settings-body
@@ -43,9 +43,9 @@
   -webkit-backdrop-filter: var(--backdrop-filter);
   backdrop-filter: var(--backdrop-filter);
   color: var(--foreground) !important;
-} 
+}
 
- .monaco-workbench .xterm .xterm-scrollable-element {
+.monaco-workbench .xterm .xterm-scrollable-element {
   background: transparent;
 }
 
@@ -76,7 +76,7 @@
 
 .sticky-widget {
   border-top-left-radius: 0px;
-} 
+}
 
 .monaco-editor,
 .monaco-editor-background {
@@ -148,11 +148,11 @@ canvas.xterm-decoration-overview-ruler {
   box-shadow: var(--depth-16) !important;
   backdrop-filter: var(--backdrop-filter);
   color: var(--foreground) !important;
-}
+} */
 
 /* menu */
-
- .monaco-menu {
+/* 
+.monaco-menu {
   background: var(--noise-bg) repeat #0c0c0c43 !important;
   background-blend-mode: exclusion;
   border-radius: var(--border-radius);
@@ -165,8 +165,7 @@ canvas.xterm-decoration-overview-ruler {
 .context-view.monaco-menu-container {
   background: transparent !important;
   background-color: transparent !important;
-} 
-
+}
 
 .monaco-scrollable-element {
   background-color: transparent !important;
@@ -244,7 +243,7 @@ li.action-item.icon:hover {
   border-bottom-right-radius: var(--border-radius) !important;
 }
 
- .monaco-workbench .monaco-menu .monaco-action-bar.vertical,
+.monaco-workbench .monaco-menu .monaco-action-bar.vertical,
 .context-view.monaco-menu-container {
   border: var(--border) !important;
   box-shadow: var(--flyout-shadow) !important;
@@ -252,27 +251,6 @@ li.action-item.icon:hover {
   background: unset;
   background-blend-mode: exclusion;
   backdrop-filter: var(--backdrop-filter);
-} 
+} */
 
-.file-icons-enabled
-  .show-file-icons
-  .vscode_getting_started_page-name-file-icon.file-icon:before,
-.file-icons-enabled
-  .show-file-icons
-  .webview-vs_code_release_notes-name-file-icon.file-icon:before {
-  background-image: url("vscode-file://vscode-app/c:/Users/ALIKA/AppData/Local/Programs/Microsoft VS Code/resources/app/resources/win32/code-icon.svg");
-  content: " ";
-}
-
-.monaco-workbench
-  .part.titlebar
-  > .titlebar-container
-  > .titlebar-left
-  > .window-appicon:not(.codicon) {
-  background-image: url("vscode-file://vscode-app/c:/Users/ALIKA/AppData/Local/Programs/Microsoft VS Code/resources/app/resources/win32/code-icon.svg");
-
-  background-position: 50%;
-  background-repeat: no-repeat;
-  background-size: 20px;
-}
 /* vscode-file://vscode-app/c:/Users/ALIKA/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/media/code-icon.svg */
