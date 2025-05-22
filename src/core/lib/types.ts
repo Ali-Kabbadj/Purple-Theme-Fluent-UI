@@ -12,9 +12,15 @@ export type Globals = {
   extentionConfig: VSCodeCustomCssConfig | undefined;
   globalGlobalThis: GlobalThis;
   purpleThemeFluentUIThemeStatus: boolean;
+  currentThemeJsonPath: string | undefined;
+  currentThemeWatcher: fs.FSWatcher | undefined;
+  configWatcher: vscode.Disposable | undefined;
   init: (context: vscode.ExtensionContext) => void;
   isCustomCssJSInstalled: () => Promise<boolean>;
   initWatchers: () => Promise<void>;
+  updateCurrentThemeJsonPath: () => void;
+  setupThemeFileWatcher: () => void;
+  refreshTheme: () => void;
 };
 
 export interface VSCodeCustomCssConfig {

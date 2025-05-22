@@ -19,6 +19,9 @@ export const globals: Globals = {
   sidebarUiProvider: undefined,
   globalGlobalThis: globalThis,
   purpleThemeFluentUIThemeStatus: false,
+  currentThemeJsonPath: undefined,
+  currentThemeWatcher: undefined,
+  configWatcher: undefined,
   init(context: vscode.ExtensionContext) {
     console.info("Initializing globals...");
 
@@ -80,6 +83,55 @@ export const globals: Globals = {
       vscode.workspace
         .getConfiguration("workbench")
         .get<string>("colorTheme") === THEME_NAME;
+
+    // 6.1 - get current theme json path
+    const currentTheme = vscode.workspace
+      .getConfiguration("workbench")
+      .get<string>("colorTheme");
+    if (currentTheme) {
+      // Look for theme in extensions
+      const extensions = vscode.extensions.all;
+      for (const ext of extensions) {
+        if (ext.packageJSON?.contributes?.themes) {
+          const themes = ext.packageJSON.contributes.themes;
+          const themeData = themes.find(
+            (theme: any) =>
+              theme.label === currentTheme || theme.id === currentTheme,
+          );
+          if (themeData) {
+            this.currentThemeJsonPath = path.join(
+              ext.extensionPath,
+              themeData.path,
+            );
+            break;
+          }
+        }
+      }
+    }
+    console.info(
+      "currentThemeJsonPath initialized:",
+      this.currentThemeJsonPath,
+    );
+
+    // 6.2 - setup theme change watcher
+    this.configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("workbench.colorTheme")) {
+        this.updateCurrentThemeJsonPath();
+        // Update sidebar to reflect new theme
+        this.sidebarUiProvider?.updatePurpleThemeFuientUIStatus(
+          vscode.workspace
+            .getConfiguration("workbench")
+            .get<string>("colorTheme") === THEME_NAME,
+        );
+      }
+    });
+    // 6.3 - setup initial theme file watcher
+    this.setupThemeFileWatcher();
+
+    // 6.4 push theme wathcer to subsciptions
+    if (this.context) {
+      this.context.subscriptions.push(this.configWatcher);
+    }
 
     // 7 - register sidebar
     this.sidebarUiProvider = new SidebarUiProvider();
@@ -190,5 +242,132 @@ export const globals: Globals = {
       );
     }
     console.info("custom css/js watcher initialized");
+  },
+  updateCurrentThemeJsonPath() {
+    const currentTheme = vscode.workspace
+      .getConfiguration("workbench")
+      .get<string>("colorTheme");
+    let newThemePath: string | undefined;
+
+    if (currentTheme) {
+      const extensions = vscode.extensions.all;
+      for (const ext of extensions) {
+        if (ext.packageJSON?.contributes?.themes) {
+          const themes = ext.packageJSON.contributes.themes;
+          const themeData = themes.find(
+            (theme: any) =>
+              theme.label === currentTheme || theme.id === currentTheme,
+          );
+          if (themeData) {
+            newThemePath = path.join(ext.extensionPath, themeData.path);
+            break;
+          }
+        }
+      }
+    }
+
+    // Only update if path actually changed
+    if (newThemePath !== this.currentThemeJsonPath) {
+      this.currentThemeJsonPath = newThemePath;
+      this.setupThemeFileWatcher();
+      console.info("Theme changed, new path:", this.currentThemeJsonPath);
+    }
+  },
+  setupThemeFileWatcher() {
+    // Clear existing watcher
+    if (this.currentThemeWatcher) {
+      this.currentThemeWatcher.close();
+      this.currentThemeWatcher = undefined;
+    }
+
+    // Set up new watcher if theme file exists
+    if (this.currentThemeJsonPath && fs.existsSync(this.currentThemeJsonPath)) {
+      try {
+        this.currentThemeWatcher = fs.watch(
+          this.currentThemeJsonPath,
+          { encoding: "utf-8" },
+          async (eventType, filename) => {
+            console.log(
+              `[theme-watcher] Theme file (${filename}) changed (${eventType})`,
+            );
+            await this.refreshTheme();
+          },
+        );
+        console.log(
+          "Theme file watcher set up for:",
+          this.currentThemeJsonPath,
+        );
+      } catch (err) {
+        console.error("Failed to watch theme file:", err);
+      }
+    }
+  },
+
+  //   const currentTheme = vscode.workspace
+  //     .getConfiguration("workbench")
+  //     .get<string>("colorTheme");
+  //   if (currentTheme) {
+  //     // Quickly switch to default dark theme and back
+  //     const config = vscode.workspace.getConfiguration("workbench");
+  //     await config.update(
+  //       "colorTheme",
+  //       "Default Dark+",
+  //       vscode.ConfigurationTarget.Global,
+  //     );
+
+  //     // Small delay to ensure the change takes effect
+  //     setTimeout(async () => {
+  //       await config.update(
+  //         "colorTheme",
+  //         currentTheme,
+  //         vscode.ConfigurationTarget.Global,
+  //       );
+  //       console.log("Theme refreshed:", currentTheme);
+  //     }, 100);
+  //   }
+  // },
+  // async refreshTheme() {
+  //   const action = await vscode.window.showInformationMessage(
+  //     "Theme file changed. Reload to see changes?",
+  //     "Soft Reload",
+  //     "Full Reload",
+  //     "Ignore",
+  //   );
+
+  //   if (action === "Soft Reload") {
+  //     try {
+  //       // Try workspace reload first (preserves more editor state)
+  //       await vscode.commands.executeCommand(
+  //         "workbench.action.reloadWindowWithExtensionsDisabled",
+  //       );
+  //       setTimeout(async () => {
+  //         await vscode.commands.executeCommand("workbench.action.reloadWindow");
+  //       }, 1000);
+  //     } catch {
+  //       await vscode.commands.executeCommand("developer.reload");
+  //     }
+  //   } else if (action === "Full Reload") {
+  //     await vscode.commands.executeCommand("workbench.action.reloadWindow");
+  //   }
+  // },
+  async refreshTheme() {
+    const action = await vscode.window.showInformationMessage(
+      "Theme file changed. Reload to see changes?",
+      "Developer Reload",
+      "Full Reload",
+      "Ignore",
+    );
+
+    if (action === "Developer Reload") {
+      console.log("Theme file changed, performing developer reload...");
+      try {
+        await vscode.commands.executeCommand("developer.reload");
+      } catch {
+        // Fallback to full reload if developer.reload doesn't exist
+        await vscode.commands.executeCommand("workbench.action.reloadWindow");
+      }
+    } else if (action === "Full Reload") {
+      await vscode.commands.executeCommand("workbench.action.reloadWindow");
+    }
   },
 };

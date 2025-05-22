@@ -87,6 +87,9 @@ export class SidebarUiProvider implements vscode.WebviewViewProvider {
         case "resetJsFile":
           this._resetFile(globals.extentionConfig?.jsUri || "");
           break;
+        case "openThemeFile":
+          this._openFile(globals.currentThemeJsonPath || "");
+          break;
       }
     });
   }
@@ -263,6 +266,22 @@ export class SidebarUiProvider implements vscode.WebviewViewProvider {
         </div>
 
         <div class="section">
+          <div class="button-row">
+            <button class="button" id="openThemeBtn" ${
+              !globals.currentThemeJsonPath ||
+              !fs.existsSync(globals.currentThemeJsonPath)
+                ? "disabled"
+                : ""
+            }>
+                Open Current JSON Theme File
+            </button>
+          </div>
+          <div class="note">
+            Opens the JSON file of the currently active VS Code theme.
+          </div>
+        </div>
+
+        <div class="section">
           <div class="checkbox-container">
             <input type="checkbox" id="toggleInjectionEnabled" ${
               this._isInjectionEnabled ? "checked" : ""
@@ -343,18 +362,6 @@ export class SidebarUiProvider implements vscode.WebviewViewProvider {
             });
           });
 
-          document.getElementById('createCssBtn').addEventListener('click', () => {
-            vscode.postMessage({
-              command: 'createCssFile'
-            });
-          });
-
-          document.getElementById('createJsBtn').addEventListener('click', () => {
-            vscode.postMessage({
-              command: 'createJsFile'
-            });
-          });
-
           document.getElementById('resetCssBtn').addEventListener('click', () => {
             vscode.postMessage({
               command: 'resetCssFile'
@@ -364,6 +371,12 @@ export class SidebarUiProvider implements vscode.WebviewViewProvider {
           document.getElementById('resetJsBtn').addEventListener('click', () => {
             vscode.postMessage({
               command: 'resetJsFile'
+            });
+          });
+
+          document.getElementById('openThemeBtn').addEventListener('click', () => {
+            vscode.postMessage({
+              command: 'openThemeFile'
             });
           });
         })();
