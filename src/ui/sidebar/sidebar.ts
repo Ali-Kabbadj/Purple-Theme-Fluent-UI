@@ -1,77 +1,34 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
-// import { createLogger } from "../../utils/logger";
-import { THEME_NAME } from "../../utils/constants";
+import { globals } from "../../core/lib/globales";
 
-// const logger = createLogger("CustomUiSidebarProvider");
-/**
- * This class manages the sidebar view for the Purple Fluent UI Injector extension
- */
-export class CustomUiSidebarProvider implements vscode.WebviewViewProvider {
-  // Make sure this exactly matches the ID in package.json
+export class SidebarUiProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "customUiSidebar";
 
   private _view?: vscode.WebviewView;
-  private _extensionUri: vscode.Uri;
-  private _cssPath: string = "";
-  private _jsPath: string = "";
   private _isInjectionEnabled: boolean = false;
   private _isThemeEnabled: boolean = false;
 
-  constructor(private readonly context: vscode.ExtensionContext) {
-    this._extensionUri = context.extensionUri;
-    console.log("CustomUiSidebarProvider initialized");
-
-    // Check if our theme is currently active
-    // Force sync with actual VS Code config on startup
-    const currentTheme = vscode.workspace
-      .getConfiguration("workbench")
-      .get<string>("colorTheme");
-    context.globalState.update(
-      "themeEnabled",
-      currentTheme === "Purple Theme Fluent-UI",
-    );
-
-    // Listen for configuration changes to update theme status
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration("workbench.colorTheme")) {
-        this._checkThemeStatus(true);
-      }
+  constructor() {
+    globals.isCustomCssJSInstalled().then((isEnabled) => {
+      this._isInjectionEnabled = isEnabled;
+      this._refreshWebview();
     });
+    this._isThemeEnabled = globals.purpleThemeFluentUIThemeStatus;
+    console.log("SidebarUiProvider initialized");
   }
 
-  private _checkThemeStatus(force = false): void {
-    const config = vscode.workspace.getConfiguration("workbench");
-    const currentTheme = config.get<string>("colorTheme");
-    const savedState = this.context.globalState.get<boolean>(
-      "theme-editor-pro.themeEnabled",
-      false,
-    );
-
-    // If saved state conflicts with actual theme, prioritize configuration
-    if (force || currentTheme !== THEME_NAME) {
-      this._isThemeEnabled = currentTheme === THEME_NAME;
-      this.context.globalState.update(
-        "theme-editor-pro.themeEnabled",
-        this._isThemeEnabled,
-      );
-    }
-
-    this._refreshWebview();
-  }
-
-  public updatePaths(cssPath: string, jsPath: string): void {
-    this._cssPath = cssPath;
-    this._jsPath = jsPath;
-    this._refreshWebview();
-    console.log("Paths updated:", { cssPath, jsPath });
-  }
-
-  public updateStatus(isEnabled: boolean): void {
+  public updateCssJsInjectorStatus(isEnabled: boolean): void {
     this._isInjectionEnabled = isEnabled;
     this._refreshWebview();
     console.log("Injection status updated:", isEnabled);
+  }
+
+  public updatePurpleThemeFuientUIStatus(isEnabled: boolean): void {
+    this._isThemeEnabled = isEnabled;
+    this._refreshWebview();
+    console.log("Theme status updated:", isEnabled);
   }
 
   private _refreshWebview(): void {
@@ -92,7 +49,9 @@ export class CustomUiSidebarProvider implements vscode.WebviewViewProvider {
     // Configure webview
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [this._extensionUri],
+      localResourceRoots: [
+        globals.extentionConfig?.extensionUri || vscode.Uri.file(""),
+      ],
     };
 
     // Set initial HTML content
@@ -117,22 +76,16 @@ export class CustomUiSidebarProvider implements vscode.WebviewViewProvider {
           vscode.commands.executeCommand(themeCommand);
           break;
         case "openCssFile":
-          this._openFile(this._cssPath);
+          this._openFile(globals.extentionConfig?.cssUri || "");
           break;
         case "openJsFile":
-          this._openFile(this._jsPath);
-          break;
-        case "createCssFile":
-          this._createFile(this._cssPath);
-          break;
-        case "createJsFile":
-          this._createFile(this._jsPath);
+          this._openFile(globals.extentionConfig?.jsUri || "");
           break;
         case "resetCssFile":
-          this._resetFile(this._cssPath);
+          this._resetFile(globals.extentionConfig?.cssUri || "");
           break;
         case "resetJsFile":
-          this._resetFile(this._jsPath);
+          this._resetFile(globals.extentionConfig?.jsUri || "");
           break;
       }
     });
@@ -152,34 +105,6 @@ export class CustomUiSidebarProvider implements vscode.WebviewViewProvider {
     vscode.workspace.openTextDocument(filePath).then((document) => {
       vscode.window.showTextDocument(document);
     });
-  }
-
-  private _createFile(filePath: string): void {
-    if (!filePath) {
-      vscode.window.showErrorMessage("File path is not defined!");
-      return;
-    }
-
-    if (fs.existsSync(filePath)) {
-      vscode.window.showInformationMessage(`File already exists: ${filePath}`);
-      return;
-    }
-
-    // Create directory if it doesn't exist
-    const dirPath = path.dirname(filePath);
-    if (!fs.existsSync(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
-
-    // Create empty file
-    fs.writeFileSync(filePath, "");
-    vscode.window.showInformationMessage(`Created new file: ${filePath}`);
-
-    // Open the newly created file
-    this._openFile(filePath);
-
-    // Refresh webview to update button states
-    this._refreshWebview();
   }
 
   private _resetFile(filePath: string): void {
@@ -211,16 +136,8 @@ export class CustomUiSidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview): string {
-    // Check if files exist
-    const cssExists = this._cssPath && fs.existsSync(this._cssPath);
-    const jsExists = this._jsPath && fs.existsSync(this._jsPath);
-
-    // Create URI for the stylesheet
-    const styleUri = webview.asWebviewUri(
-      vscode.Uri.file(
-        path.join(this._extensionUri.fsPath, "resources", "sidebar.css"),
-      ),
-    );
+    const cssExists = fs.existsSync(globals.extentionConfig?.cssUri || "");
+    const jsExists = fs.existsSync(globals.extentionConfig?.jsUri || "");
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -313,12 +230,14 @@ export class CustomUiSidebarProvider implements vscode.WebviewViewProvider {
           font-weight: bold;
           margin-bottom: 8px;
         }
+        fieldset{
+          border: 0px;
+        }
       </style>
     </head>
     <body>
       <div class="container">
         <div class="section">
-          <div class="section-title">Color Theme Status</div>
           <div class="checkbox-container">
             <input type="checkbox" id="toggleThemeEnabled" ${
               this._isThemeEnabled ? "checked" : ""
@@ -341,47 +260,36 @@ export class CustomUiSidebarProvider implements vscode.WebviewViewProvider {
           <div class="file-status">
             Toggle to enable injection of your custom CSS/JS. Changes will reload the window.
           </div>
-        </div>
+          <div>
+            <fieldset ${!this._isInjectionEnabled ? "disabled" : ""}>
+              <div class="button-row">
+                <button class="button main-button" id="openCssBtn" ${
+                  !cssExists ? "disabled" : ""
+                }>
+                  Open Custom CSS File
+                </button>
+                <button class="button small-button" id="resetCssBtn" title="Reset File" ${
+                  !cssExists ? "disabled" : ""
+                }>
+                  ⟲
+                </button>
+              </div>
 
-        <div class="section">
-          <div class="section-title">Custom Files</div>
-          <fieldset ${!this._isInjectionEnabled ? "disabled" : ""}>
-            <div class="button-row">
-              <button class="button main-button" id="openCssBtn" ${
-                !cssExists ? "disabled" : ""
-              }>
-                Open Custom CSS File
-              </button>
-              <button class="button small-button" id="createCssBtn" title="Create File" ${
-                cssExists ? "disabled" : ""
-              }>
-                +
-              </button>
-              <button class="button small-button" id="resetCssBtn" title="Reset File" ${
-                !cssExists ? "disabled" : ""
-              }>
-                ⟲
-              </button>
-            </div>
+              <div class="button-row">
+                <button class="button main-button" id="openJsBtn" ${
+                  !jsExists ? "disabled" : ""
+                }>
+                  Open Custom JS File
+                </button>
 
-            <div class="button-row">
-              <button class="button main-button" id="openJsBtn" ${
-                !jsExists ? "disabled" : ""
-              }>
-                Open Custom JS File
-              </button>
-              <button class="button small-button" id="createJsBtn" title="Create File" ${
-                jsExists ? "disabled" : ""
-              }>
-                +
-              </button>
-              <button class="button small-button" id="resetJsBtn" title="Reset File" ${
-                !jsExists ? "disabled" : ""
-              }>
-                ⟲
-              </button>
-            </div>
-          </fieldset>
+                <button class="button small-button" id="resetJsBtn" title="Reset File" ${
+                  !jsExists ? "disabled" : ""
+                }>
+                  ⟲
+                </button>
+              </div>
+            </fieldset>
+          </div>
         </div>
       </div>
 

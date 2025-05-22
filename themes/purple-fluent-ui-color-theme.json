@@ -1,7 +1,6 @@
 {
   "name": "Purple Theme Fluent-UI",
   "type": "dark",
-  "semanticHighlighting": true,
   "semanticTokenColors": {
     "enumMember": {
       "foreground": "#999999"

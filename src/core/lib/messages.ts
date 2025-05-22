@@ -1,18 +1,5 @@
 import * as vscode from "vscode";
-
-export interface MessageHandler {
-  promptRestartAsAdmin: () => Promise<void>;
-  promptRestartIde: () => Promise<void>;
-  showEnabled: () => Promise<void>;
-  showDisabled: () => Promise<void>;
-  showAlreadyDisabled: () => Promise<void>;
-  showError: (error: string) => Promise<void>;
-  promptNotFound: () => Promise<void>;
-  promptReloadAfterUpgrade: () => Promise<void>;
-  promptLocatePathFailure: () => void;
-  promptLocatePathBackupFailure: () => void;
-  cannotLoad: (url: string) => void;
-}
+import { MessageHandler } from "./interfaces";
 
 export const messageHandler: MessageHandler = {
   async promptRestartAsAdmin() {
@@ -28,6 +15,9 @@ export const messageHandler: MessageHandler = {
   },
 
   async promptRestartIde() {
+    // Wait 5 seconds before showing restart prompt
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     const choice = await vscode.window.showInformationMessage(
       "A restart of Visual Studio Code is required to apply changes.",
       "Restart Now",
@@ -38,6 +28,9 @@ export const messageHandler: MessageHandler = {
   },
 
   async showEnabled() {
+    // Wait 5 seconds before showing restart prompt
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     const choice = await vscode.window.showInformationMessage(
       "Custom CSS and JS enabled. Restart to take effect. If Code complains about corruption, click 'Don't Show Again'. See README for details.",
       "Restart Now",
@@ -48,6 +41,9 @@ export const messageHandler: MessageHandler = {
   },
 
   async showDisabled() {
+    // Wait 5 seconds before showing restart prompt
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     const choice = await vscode.window.showInformationMessage(
       "Custom CSS and JS disabled and reverted to default. Restart to take effect.",
       "Restart Now",
@@ -81,6 +77,9 @@ export const messageHandler: MessageHandler = {
   },
 
   async promptReloadAfterUpgrade() {
+    // Wait 5 seconds before showing restart prompt
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     const choice = await vscode.window.showInformationMessage(
       "Detected CSS/JS reloading after VSCode upgrade. Restart to finalize.",
       "Restart Now",
@@ -111,5 +110,23 @@ export const messageHandler: MessageHandler = {
 
   cannotLoad(url: string) {
     vscode.window.showErrorMessage(`Cannot load '${url}'. Skipping.`);
+  },
+
+  ChecksumsChanged(verb: string) {
+    vscode.window.showInformationMessage(
+      `Checksums ${verb}. Please restart VSCode to see effect.`,
+    );
+  },
+
+  ChecksumsUnchanged() {
+    vscode.window.showInformationMessage(
+      "No changes to checksums were necessary.",
+    );
+  },
+
+  ChecksumsError() {
+    vscode.window.showErrorMessage(
+      "An error occurred during execution.Make sure you have write access rights to the VSCode files, see README",
+    );
   },
 };

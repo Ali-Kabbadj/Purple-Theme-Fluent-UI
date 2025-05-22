@@ -1,34 +1,15 @@
-import { VSCodeCustomCssConfig } from "./../lib/types";
+import { VSCodeCustomCssConfig } from "../lib/types";
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
-import { messageHandler } from "../messages";
+import { messageHandler } from "../lib/messages";
 import * as Url from "url";
 import * as os from "os";
 import { globals } from "../lib/globales";
-
-export interface Helper {
-  uninstallImpl: () => Promise<void>;
-  BackupFilePath: (uuid: string) => string;
-  getBackupUuid: () => Promise<string | null>;
-  createBackup: (uuidSession: string) => Promise<void>;
-  restoreBackup: (backupFilePath: string) => Promise<void>;
-  deleteBackupFiles: () => Promise<void>;
-  performPatch: (uuidSession: string) => Promise<void>;
-  enabledRestart: () => void;
-  disabledRestart: () => void;
-  clearExistingPatches: (html: string) => string;
-  patchHtml: () => Promise<string>;
-  patchHtmlForItem: (url: string) => Promise<string>;
-  parsedUrl: (url: string) => string;
-  isCustomCssInstalled: () => Promise<boolean>;
-  resolveVariable: (key: string) => string | undefined;
-  getContent: (url: string | URL) => Promise<Buffer>;
-  UpdateConfigFiles: () => void;
-}
+import { Helper } from "../lib/interfaces";
 
 export const helper: Helper = {
-  uninstallImpl: async () => {
+  uninstallCssJsInjector: async () => {
     try {
       const backupUuid = await helper.getBackupUuid();
       if (!backupUuid) {
@@ -51,15 +32,14 @@ export const helper: Helper = {
       }
 
       await helper.deleteBackupFiles();
-      globals.sidebarProvider?.updateStatus(false);
+      globals.sidebarUiProvider?.updateCssJsInjectorStatus(false);
     } catch (err) {
       console.error(`Error during uninstall: ${err}`);
       // Still update status even if error occurred
-      globals.sidebarProvider?.updateStatus(false);
+      globals.sidebarUiProvider?.updateCssJsInjectorStatus(false);
     }
   },
 
-  //#######################   Backup #####################################
   BackupFilePath: (uuid) => {
     if (!globals.vs_code_base || globals.vs_code_base === undefined) {
       messageHandler.promptLocatePathBackupFailure();
@@ -77,16 +57,19 @@ export const helper: Helper = {
     try {
       // Check if file exists first
       try {
-        if (globals.htmlFile === undefined) {
+        if (globals.htmlFilePath === undefined) {
           return "";
         }
-        await fs.promises.access(globals.htmlFile, fs.constants.F_OK);
+        await fs.promises.access(globals.htmlFilePath, fs.constants.F_OK);
       } catch (err) {
-        console.log(`HTML file not found: ${globals.htmlFile}`);
+        console.log(`HTML file not found: ${globals.htmlFilePath}`);
         return null;
       }
 
-      const htmlContent = await fs.promises.readFile(globals.htmlFile, "utf-8");
+      const htmlContent = await fs.promises.readFile(
+        globals.htmlFilePath,
+        "utf-8",
+      );
       const m = htmlContent.match(
         /<!-- !! VSCODE-CUSTOM-CSS-SESSION-ID ([0-9a-fA-F-]+) !! -->/,
       );
@@ -104,10 +87,10 @@ export const helper: Helper = {
 
   createBackup: async (uuidSession) => {
     try {
-      if (globals.htmlFile === undefined) {
+      if (globals.htmlFilePath === undefined) {
         return;
       }
-      let html = await fs.promises.readFile(globals.htmlFile, "utf-8");
+      let html = await fs.promises.readFile(globals.htmlFilePath, "utf-8");
       html = helper.clearExistingPatches(html);
       const backupPath = helper.BackupFilePath(uuidSession);
 
@@ -133,16 +116,16 @@ export const helper: Helper = {
   restoreBackup: async (backupFilePath) => {
     try {
       if (fs.existsSync(backupFilePath)) {
-        if (globals.htmlFile === undefined) {
+        if (globals.htmlFilePath === undefined) {
           return;
         }
-        // Check if the htmlFile exists before attempting to unlink it
-        if (fs.existsSync(globals.htmlFile)) {
+        // Check if the htmlFilePath exists before attempting to unlink it
+        if (fs.existsSync(globals.htmlFilePath)) {
           try {
-            await fs.promises.unlink(globals.htmlFile);
+            await fs.promises.unlink(globals.htmlFilePath);
           } catch (err) {
             console.log(
-              `Failed to unlink ${globals.htmlFile}, trying to continue anyway:`,
+              `Failed to unlink ${globals.htmlFilePath}, trying to continue anyway:`,
               err,
             );
             // Continue even if unlink fails
@@ -181,13 +164,13 @@ export const helper: Helper = {
           for (const potentialPath of possiblePaths) {
             if (fs.existsSync(potentialPath)) {
               console.log(`Found workbench at new location: ${potentialPath}`);
-              globals.htmlFile = potentialPath; // Update the global htmlFile variable
+              globals.htmlFilePath = potentialPath; // Update the global htmlFilePath variable
               try {
-                await fs.promises.unlink(globals.htmlFile);
+                await fs.promises.unlink(globals.htmlFilePath);
                 break; // Found and deleted, so break out of the loop
               } catch (err) {
                 console.log(
-                  `Failed to unlink ${globals.htmlFile}, trying to continue:`,
+                  `Failed to unlink ${globals.htmlFilePath}, trying to continue:`,
                   err,
                 );
                 // Continue even if unlink fails
@@ -198,9 +181,9 @@ export const helper: Helper = {
 
         // Even if unlink failed, try to copy the backup file
         try {
-          await fs.promises.copyFile(backupFilePath, globals.htmlFile);
+          await fs.promises.copyFile(backupFilePath, globals.htmlFilePath);
           console.log(
-            `Successfully restored backup from ${backupFilePath} to ${globals.htmlFile}`,
+            `Successfully restored backup from ${backupFilePath} to ${globals.htmlFilePath}`,
           );
         } catch (copyErr) {
           console.error(`Failed to copy backup file: ${copyErr}`);
@@ -221,10 +204,10 @@ export const helper: Helper = {
 
   deleteBackupFiles: async () => {
     try {
-      if (globals.htmlFile === undefined) {
+      if (globals.htmlFilePath === undefined) {
         return;
       }
-      const htmlDir = path.dirname(globals.htmlFile.toString());
+      const htmlDir = path.dirname(globals.htmlFilePath.toString());
       try {
         const htmlDirItems = await fs.promises.readdir(htmlDir);
         for (const item of htmlDirItems) {
@@ -244,15 +227,13 @@ export const helper: Helper = {
       console.error(`Error in deleteBackupFiles: ${err}`);
     }
   },
-  //#######################   Backup #####################################
 
-  //#######################   Patch   #############################
   performPatch: async (uuidSession) => {
-    if (globals.htmlFile === undefined) {
+    if (globals.htmlFilePath === undefined) {
       return;
     }
-    helper.UpdateConfigFiles();
-    let html = await fs.promises.readFile(globals.htmlFile, "utf-8");
+    helper.UpdateConfigWithCssJSFiles();
+    let html = await fs.promises.readFile(globals.htmlFilePath, "utf-8");
     html = helper.clearExistingPatches(html);
     if (!globals.extentionConfig) {
       return;
@@ -271,7 +252,7 @@ export const helper: Helper = {
         "<!-- !! VSCODE-CUSTOM-CSS-END !! -->\n</html>",
     );
     try {
-      await fs.promises.writeFile(globals.htmlFile, html, "utf-8");
+      await fs.promises.writeFile(globals.htmlFilePath, html, "utf-8");
     } catch (e) {
       // vscode.window.showInformationMessage(msg.admin);
       await messageHandler.promptRestartAsAdmin();
@@ -279,7 +260,6 @@ export const helper: Helper = {
       messageHandler.promptRestartIde();
       return;
     }
-    // enabledRestart();
     messageHandler.promptRestartIde();
   },
 
@@ -356,12 +336,15 @@ export const helper: Helper = {
     throw new Error("Function not implemented.");
   },
 
-  isCustomCssInstalled: async () => {
+  isCssJsInjectorInstalled: async () => {
     try {
-      if (globals.htmlFile === undefined) {
+      if (globals.htmlFilePath === undefined) {
         return false;
       }
-      const htmlContent = await fs.promises.readFile(globals.htmlFile, "utf-8");
+      const htmlContent = await fs.promises.readFile(
+        globals.htmlFilePath,
+        "utf-8",
+      );
       return htmlContent.includes("<!-- !! VSCODE-CUSTOM-CSS-START !! -->");
     } catch (e) {
       console.error("Error checking if custom CSS is installed:", e);
@@ -409,7 +392,7 @@ export const helper: Helper = {
     }
   },
 
-  UpdateConfigFiles: () => {
+  UpdateConfigWithCssJSFiles: () => {
     const extensionUri = vscode.extensions.getExtension(
       "Ali-Kabbadj.theme-editor-pro",
     )?.extensionUri;

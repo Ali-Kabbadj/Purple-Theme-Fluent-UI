@@ -3,7 +3,7 @@ import {
   activate_vscode_custom_ui_injector,
   deactivate_vscode_custom_ui_injector,
 } from "./core/base";
-import { THEME_NAME } from "./utils/constants";
+import { THEME_NAME } from "./core/lib/constants";
 
 export async function activate(context: vscode.ExtensionContext) {
   if (context.extensionMode === vscode.ExtensionMode.Development) {
