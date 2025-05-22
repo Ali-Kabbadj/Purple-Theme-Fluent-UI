@@ -8,11 +8,13 @@
 
 **The Ultimate VS Code Theme Customization Extension**
 
+
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/Ali-Kabbadj.theme-editor-pro?style=for-the-badge&color=9945FF&labelColor=2D1B3D)](https://marketplace.visualstudio.com/items?itemName=Ali-Kabbadj.theme-editor-pro)
 [![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/Ali-Kabbadj.theme-editor-pro?style=for-the-badge&color=9945FF&labelColor=2D1B3D)](https://marketplace.visualstudio.com/items?itemName=Ali-Kabbadj.theme-editor-pro)
 [![GitHub Issues](https://img.shields.io/github/issues/Ali-Kabbadj/VS-Theme-Editor-Pro?style=for-the-badge&color=9945FF&labelColor=2D1B3D)](https://github.com/Ali-Kabbadj/VS-Theme-Editor-Pro/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/Ali-Kabbadj/VS-Theme-Editor-Pro?style=for-the-badge&color=9945FF&labelColor=2D1B3D)](https://github.com/Ali-Kabbadj/VS-Theme-Editor-Pro)
 [![License](https://img.shields.io/github/license/Ali-Kabbadj/VS-Theme-Editor-Pro?style=for-the-badge&color=9945FF&labelColor=2D1B3D)](https://github.com/Ali-Kabbadj/VS-Theme-Editor-Pro/blob/main/LICENSE)
+
 
 </div>
 
