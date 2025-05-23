@@ -54,9 +54,8 @@ Transform your coding environment with real-time customization capabilities and 
 
 - **⚡ Hot Reload Technology**
 
-  - Real-time updates on file save
   - Auto-detection of theme file changes
-  - Instant preview of modifications
+  - Instant prompt for restart on config change.
 
 - **🎪 Purple Fluent UI Theme**
 
