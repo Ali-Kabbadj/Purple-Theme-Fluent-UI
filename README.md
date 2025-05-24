@@ -216,11 +216,11 @@ _For CSS/JS injection to work properly_
 
 - Enable features **one at a time** for stability
 - Restart VS Code after major changes
-- Use the built-in backup system for safety
+- Use the built-in backup system for safety (to be implimented, for now there is auto backup/restore implimented), or you can backup you workbend.html yourself.
 
 ### **📁 File Management**
 
-- Custom files are automatically created and managed
+- Custom files are automatically managed
 - Use the reset buttons (⟲) to clear file contents
 - All changes are backed up automatically
 
