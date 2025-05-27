@@ -7,6 +7,11 @@ import { Globals, VSCodeCustomCssConfig } from "./types";
 import { helper } from "../actions/Helper";
 import { THEME_NAME } from "./constants";
 import { GlobalThis } from "./interfaces";
+import {
+  cmdInstallCssJsInjector,
+  cmdUninstall,
+  cmdUpdateCssJs,
+} from "../actions/Commands";
 
 declare const globalThis: GlobalThis;
 
@@ -157,22 +162,23 @@ export const globals: Globals = {
         fs.watch(
           this.extentionConfig.cssUri,
           { encoding: "utf-8" },
-          (eventType, filename) => {
+          async (eventType, filename) => {
             console.log(`[watcher] (${filename}) changed (${eventType})`);
+            // cmdUninstall(false);
+            // cmdInstallCssJsInjector(false);
             // vscode.commands.executeCommand(
             //   "theme-editor-pro.updateCssJsInjection",
             // );
+            await cmdUpdateCssJs();
             messageHandler.promptReloadAfterUpgrade();
           },
         );
         fs.watch(
           this.extentionConfig.jsUri,
           { encoding: "utf-8" },
-          (eventType, filename) => {
+          async (eventType, filename) => {
             console.log(`[watcher] (${filename}) changed (${eventType})`);
-            // vscode.commands.executeCommand(
-            //   "theme-editor-pro.updateCssJsInjection",
-            // );
+            await cmdUpdateCssJs();
             messageHandler.promptReloadAfterUpgrade();
           },
         );

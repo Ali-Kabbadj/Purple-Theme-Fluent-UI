@@ -11,7 +11,7 @@ import { helper } from "./Helper";
 import fs from "fs";
 import { messageHandler } from "../lib/messages";
 
-export async function cmdInstallCssJsInjector() {
+export async function cmdInstallCssJsInjector(how_restart = true) {
   const uuidSession = uuid.v4();
   await helper.createBackup(uuidSession);
   globals.sidebarUiProvider?.updateCssJsInjectorStatus(true);
@@ -21,7 +21,39 @@ export async function cmdInstallCssJsInjector() {
   await helper.performPatch(uuidSession);
 }
 
-export async function cmdUninstall() {
+export async function cmdUpdateCssJs() {
+  // uninstall
+  const backupUuid = await helper.getBackupUuid();
+  if (!backupUuid) {
+    console.log("No backup UUID found in HTML file");
+    // Clean up any stray backup files even if no UUID was found
+    await helper.deleteBackupFiles();
+  } else {
+    const backupPath = helper.BackupFilePath(backupUuid);
+    // Check if backup file exists before attempting to restore
+    try {
+      await fs.promises.access(backupPath, fs.constants.F_OK);
+      console.log(`Found backup file: ${backupPath}`);
+      await helper.restoreBackup(backupPath);
+    } catch (err) {
+      console.log(
+        `Backup file not found: ${backupPath}, skipping restore step`,
+      );
+      // Don't throw error here - we should still continue and try to clean up
+    }
+    await helper.deleteBackupFiles();
+  }
+  // reinstall
+  const uuidSession = uuid.v4();
+  await helper.createBackup(uuidSession);
+  if (globals.purpleThemeFluentUIThemeStatus) {
+    cmdtoggleThemes(true);
+  }
+  globals.sidebarUiProvider?.updateCssJsInjectorStatus(true);
+  await helper.performPatch(uuidSession);
+}
+
+export async function cmdUninstall(show_restart = true) {
   try {
     const backupUuid = await helper.getBackupUuid();
     if (!backupUuid) {
@@ -48,115 +80,13 @@ export async function cmdUninstall() {
     if (globals.purpleThemeFluentUIThemeStatus) {
       cmdtoggleThemes(true);
     }
-    messageHandler.promptRestartIde();
+    if (show_restart) {
+      messageHandler.promptRestartIde();
+    }
   } catch (err) {
     console.error(`Error during uninstall: ${err}`);
     // Still update status even if error occurred
     globals.sidebarUiProvider?.updateCssJsInjectorStatus(false);
-  }
-}
-
-export async function setCustomThemeSettingsDetailed() {
-  try {
-    const config = vscode.workspace.getConfiguration();
-
-    // FluentUI settings
-    await config.update(
-      "fluentui.accent",
-      "#bc47ffdd",
-      vscode.ConfigurationTarget.Global,
-    );
-    await config.update(
-      "fluentui.darkBackground",
-      "#bc47ffdd",
-      vscode.ConfigurationTarget.Global,
-    );
-    await config.update(
-      "fluentui.lightBackground",
-      "#bc47ffdd",
-      vscode.ConfigurationTarget.Global,
-    );
-
-    // Get existing color customizations
-    const colorCustomizations: { [key: string]: string } =
-      config.get("workbench.colorCustomizations") || {};
-
-    // Update specific colors
-    colorCustomizations["titleBar.activeBackground"] = "#42304c";
-    colorCustomizations["titleBar.inactiveBackground"] = "#42304c";
-    colorCustomizations["editor.background"] = "#bc47ffdd";
-
-    // Apply the updated color customizations
-    await config.update(
-      "workbench.colorCustomizations",
-      colorCustomizations,
-      vscode.ConfigurationTarget.Global,
-    );
-
-    vscode.window.showInformationMessage("All custom colors applied!");
-  } catch (error) {
-    vscode.window.showErrorMessage(`Error applying colors: ${error}`);
-  }
-}
-
-export async function resetCustomThemeSettingsVerbose() {
-  try {
-    const config = vscode.workspace.getConfiguration();
-    const resetOperations = [];
-
-    // Reset FluentUI settings
-    resetOperations.push(
-      config.update(
-        "fluentui.accent",
-        undefined,
-        vscode.ConfigurationTarget.Global,
-      ),
-      config.update(
-        "fluentui.darkBackground",
-        undefined,
-        vscode.ConfigurationTarget.Global,
-      ),
-      config.update(
-        "fluentui.lightBackground",
-        undefined,
-        vscode.ConfigurationTarget.Global,
-      ),
-    );
-
-    // Handle workbench color customizations
-    const currentColors: { [key: string]: string } =
-      config.get("workbench.colorCustomizations") || {};
-    const colorsToRemove = [
-      "titleBar.activeBackground",
-      "titleBar.inactiveBackground",
-      "editor.background",
-    ];
-
-    // Create new object without the colors we want to remove
-    const filteredColors = Object.keys(currentColors)
-      .filter((key) => !colorsToRemove.includes(key))
-      .reduce<Record<string, string>>((obj, key) => {
-        obj[key] = currentColors[key];
-        return obj;
-      }, {});
-
-    // Update or remove workbench.colorCustomizations
-    resetOperations.push(
-      config.update(
-        "workbench.colorCustomizations",
-        Object.keys(filteredColors).length > 0 ? filteredColors : undefined,
-        vscode.ConfigurationTarget.Global,
-      ),
-    );
-
-    // Wait for all operations to complete
-    await Promise.all(resetOperations);
-
-    vscode.window.showInformationMessage(
-      "All custom theme settings have been reset to defaults!",
-    );
-  } catch (error) {
-    vscode.window.showErrorMessage(`Error resetting theme settings: ${error}`);
   }
 }
 
@@ -173,7 +103,7 @@ export async function cmdtoggleThemes(enable: boolean): Promise<void> {
     ); // auto‐enables on install :contentReference[oaicite:0]{index=0}
   }
 
-  // 3) Toggle your theme and save/restore previous
+  // 3) Toggle  theme and save/restore previous
   if (enable) {
     if (currentTheme !== THEME_NAME) {
       globals.context?.globalState.update(

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { registerCommands } from "./actions/Registrator";
 import { globals } from "./lib/globales";
 import { THEME_NAME } from "./lib/constants";
+import { cmdUninstall } from "./actions/Commands";
 
 export function init_extension(context: vscode.ExtensionContext): void {
   globals.init(context);
@@ -17,4 +18,5 @@ export function deactivate_extension(): void {
       vscode.ConfigurationTarget.Global,
     );
   }
+  cmdUninstall(true);
 }

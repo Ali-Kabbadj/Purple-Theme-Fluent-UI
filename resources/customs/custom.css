@@ -1,4 +1,4 @@
-/* .tab.active {
+.tab.active {
   box-shadow: inset -3em 3em #00000036, 0 0 0 0px #00000036,
     0.3em 0.3em 1em hsla(0, 0%, 0%, 0.212) !important;
 }
@@ -10,9 +10,9 @@
 
 .monaco-editor .sticky-line-content {
   background-color: black;
-} */
+}
 
-/* .monaco-workbench
+.monaco-workbench
   .part.editor
   > .content
   .editor-group-container
@@ -22,9 +22,8 @@
   background-color: #00000036;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-} */
-
-/* .monaco-breadcrumbs .monaco-breadcrumb-item .codicon-breadcrumb-separator {
+}
+*/ .monaco-breadcrumbs .monaco-breadcrumb-item .codicon-breadcrumb-separator {
   color: var(--vscode-icon-foreground);
 }
 
@@ -49,29 +48,17 @@
   background: transparent;
 }
 
-.monaco-editor .monaco-resizable-hover > .monaco-hover {
-  background: var(--noise-bg) repeat var(--quick-input-widget-bg) !important;
-  background-blend-mode: exclusion;
-  border-radius: var(--border-radius);
-  box-shadow: var(--depth-16) !important;
-  -webkit-backdrop-filter: var(--backdrop-filter);
-  backdrop-filter: var(--backdrop-filter);
-  color: var(--foreground) !important;
-  border-radius: 10px;
-  border-width: 0px;
-}
-
 .xterm-scrollable-element {
   background-color: var(--card-bg) !important;
 }
 
 .monaco-editor .sticky-line-content {
-  background-color: #0c0912;
+  background-color: #0f0b17 !important;
 }
 
 .monaco-editor .sticky-line-content,
 .monaco-editor .sticky-line-number {
-  background-color: #0c0912;
+  background-color: #0c0912 !important;
 }
 
 .sticky-widget {
@@ -80,30 +67,7 @@
 
 .monaco-editor,
 .monaco-editor-background {
-  background: #0c0912;
-}
-
-.monaco-editor .monaco-resizable-hover > .monaco-hover {
-  height: -webkit-fill-available;
-}
-
-.monaco-hover {
-  width: max-content !important;
-  height: max-content !important;
-  max-width: max-content !important;
-  max-height: max-content !important;
-  --vscode-hover-maxWidth: max-content !important;
-}
-
-.monaco-hover-content {
-  width: fit-content !important;
-  height: fit-content !important;
-  max-width: fit-content !important;
-  max-height: fit-content !important;
-}
-
-.monaco-hover .markdown-hover > .hover-contents:not(.code-hover-contents) {
-  max-width: fit-content !important;
+  background: #0f0b17 !important;
 }
 
 .visible.scrollbar.vertical {
@@ -148,10 +112,10 @@ canvas.xterm-decoration-overview-ruler {
   box-shadow: var(--depth-16) !important;
   backdrop-filter: var(--backdrop-filter);
   color: var(--foreground) !important;
-} */
+}
 
 /* menu */
-/* 
+
 .monaco-menu {
   background: var(--noise-bg) repeat #0c0c0c43 !important;
   background-blend-mode: exclusion;
@@ -169,6 +133,7 @@ canvas.xterm-decoration-overview-ruler {
 
 .monaco-scrollable-element {
   background-color: transparent !important;
+  max-height: -webkit-fill-available !important;
 }
 
 .input .empty {
@@ -251,6 +216,78 @@ li.action-item.icon:hover {
   background: unset;
   background-blend-mode: exclusion;
   backdrop-filter: var(--backdrop-filter);
+}
+
+.monaco-editor .monaco-resizable-hover > .monaco-hover {
+  background: var(--noise-bg) repeat var(--quick-input-widget-bg) !important;
+  background-blend-mode: exclusion;
+  border-radius: var(--border-radius);
+  box-shadow: var(--depth-16) !important;
+  -webkit-backdrop-filter: var(--backdrop-filter);
+  backdrop-filter: var(--backdrop-filter);
+  color: var(--foreground) !important;
+  border-radius: 10px;
+  border-width: 0px;
+  max-height: 80vh !important;
+}
+
+/* .monaco-editor .monaco-resizable-hover {
+  height: -webkit-fill-available;
+  max-height: -webkit-fill-available;
+} */
+
+/* .monaco-hover {
+  width: max-content !important;
+  height: max-content !important;
+  max-width: max-content !important;
+  max-height: max-content !important;
+  --vscode-hover-maxWidth: max-content !important;
+} */
+
+/* .monaco-hover-content {
+  width: fit-content !important;
+  height: fit-content !important;
+  max-width: fit-content !important;
+  max-height: fit-content !important;
+}
+
+.monaco-hover .markdown-hover > .hover-contents:not(.code-hover-contents) {
+  max-width: fit-content !important;
 } */
 
 /* vscode-file://vscode-app/c:/Users/ALIKA/AppData/Local/Programs/Microsoft%20VS%20Code/resources/app/out/media/code-icon.svg */
+
+/* debugger section */
+/* .monaco-workbench .part > .header-or-footer,
+.monaco-workbench .part > .title {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: self-start !important;
+} */
+
+/* .monaco-workbench .select-container {
+  width: -webkit-fill-available;
+} */
+
+.monaco-sash.vertical {
+  background: #33254b !important;
+}
+/* .monaco-breadcrumbs {
+  width: calc(100% - 16px) !important;
+} */
+
+.monaco-workbench
+  .part.editor
+  > .content
+  .editor-group-container
+  > .title
+  .breadcrumbs-below-tabs
+  .breadcrumbs-control {
+  max-width: 100% !important;
+}
+
+/* .monaco-action-bar .action-item {
+  background: #ff0000 !important;
+} */
+
+

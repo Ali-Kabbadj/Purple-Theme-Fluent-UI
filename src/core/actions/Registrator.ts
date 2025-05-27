@@ -4,6 +4,7 @@ import {
   // cmdReinstall,
   cmdtoggleThemes,
   cmdUninstall,
+  cmdUpdateCssJs,
 } from "./Commands";
 
 export function registerCommands(context: vscode.ExtensionContext): void {
@@ -25,14 +26,14 @@ export function registerCommands(context: vscode.ExtensionContext): void {
     "theme-editor-pro.uninstallCssJsInjection",
     cmdUninstall,
   );
-  // const updateCssJsInjection = vscode.commands.registerCommand(
-  //   "theme-editor-pro.updateCssJsInjection",
-  //   cmdReinstall,
-  // );
+  const updateCssJsInjection = vscode.commands.registerCommand(
+    "theme-editor-pro.updateCssJsInjection",
+    cmdUpdateCssJs,
+  );
 
   context.subscriptions.push(enableThemeCommand);
   context.subscriptions.push(disableThemeCommand);
   context.subscriptions.push(installCssJsInjection);
   context.subscriptions.push(uninstallCssJsInjection);
-  // context.subscriptions.push(updateCssJsInjection);
+  context.subscriptions.push(updateCssJsInjection);
 }
