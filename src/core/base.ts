@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { ExtentionConfig } from "./lib/ExtentionConfig";
+import { ExtentionConfig } from "./Models/ExtentionConfig";
 import { Logger } from "../utils/logger";
 
 export function init_extension(context: vscode.ExtensionContext): void {

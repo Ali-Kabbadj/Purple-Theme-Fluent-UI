@@ -1,8 +1,8 @@
 import { ExtensionContext } from "vscode";
-import { ExtentionConfigInterface, Paths, States } from "./types";
+import { ExtentionConfigInterface, Paths, States } from "../lib/types";
 import * as vscode from "vscode";
 import path from "path";
-import { THEME_NAME } from "./constants";
+import { THEME_NAME } from "../lib/constants";
 
 export class ExtentionConfig implements ExtentionConfigInterface {
   context: ExtensionContext;
