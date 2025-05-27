@@ -1,33 +1,28 @@
 import * as vscode from "vscode";
-import { SidebarUiProvider } from "../../ui/sidebar/sidebar";
-import fs from "fs";
-import { GlobalThis } from "./interfaces";
 
 export type Globals = {
-  app_dir: string | undefined;
-  vs_code_base: string | undefined;
-  sidebarUiProvider: SidebarUiProvider | undefined;
-  htmlFilePath: fs.PathLike | undefined;
-  context: vscode.ExtensionContext | undefined;
-  extentionConfig: VSCodeCustomCssConfig | undefined;
-  globalGlobalThis: GlobalThis;
-  purpleThemeFluentUIThemeStatus: boolean;
-  currentThemeJsonPath: string | undefined;
-  currentThemeWatcher: fs.FSWatcher | undefined;
-  configWatcher: vscode.Disposable | undefined;
-  init: (context: vscode.ExtensionContext) => void;
-  isCustomCssJSInstalled: () => Promise<boolean>;
-  initWatchers: () => Promise<void>;
-  updateCurrentThemeJsonPath: () => void;
-  setupThemeFileWatcher: () => void;
-  refreshTheme: () => void;
+  init_extention_config: (extentionConfig: ExtentionConfig) => void;
 };
 
-export interface VSCodeCustomCssConfig {
-  imports: string[];
-  extensionUri: vscode.Uri;
-  cssUri: string;
-  jsUri: string;
-  resourcesPath: string;
-  imagesPath: string;
+export type Paths = {
+  css_file: string;
+  js_file: string;
+  app_root: string;
+  extension_uri: vscode.Uri;
+  resources: string;
+  images: string;
+  current_theme_json: string;
+  vs_code_base: string;
+  workbench_html_file: string;
+};
+
+export type States = {
+  is_purple_theme_enabled: boolean;
+  is_fluent_ui_enabled: boolean;
+};
+
+export interface ExtentionConfigInterface {
+  context: vscode.ExtensionContext;
+  paths: Paths;
+  states: States;
 }
