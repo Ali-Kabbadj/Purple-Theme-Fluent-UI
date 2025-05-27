@@ -1,9 +1,3 @@
-import * as vscode from "vscode";
-
-// export type Globals = {
-//   init_extention_config: (extentionConfig: ExtentionConfig) => void;
-// };
-
 export type Paths = {
   css_file: string;
   js_file: string;
@@ -20,9 +14,3 @@ export type States = {
   is_purple_theme_enabled: boolean;
   is_fluent_ui_enabled: boolean;
 };
-
-export interface ExtentionConfigInterface {
-  context: vscode.ExtensionContext;
-  paths: Paths;
-  states: States;
-}

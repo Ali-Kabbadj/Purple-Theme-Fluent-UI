@@ -1,10 +1,11 @@
 import { ExtensionContext } from "vscode";
-import { ExtentionConfigInterface, Paths, States } from "../lib/types";
+import { Paths, States } from "./lib/types";
 import * as vscode from "vscode";
 import path from "path";
-import { THEME_NAME } from "../lib/constants";
+import { THEME_NAME } from "../utils/constants";
+import { ConfigInterface } from "./lib/interfaces";
 
-export class ExtentionConfig implements ExtentionConfigInterface {
+export class Config implements ConfigInterface {
   context: ExtensionContext;
   paths: Paths;
   states: States;
@@ -45,7 +46,7 @@ export class ExtentionConfig implements ExtentionConfigInterface {
     const customPath = path.join(
       extention_path,
       "resources",
-      "custom",
+      "customs",
       filename,
     );
     if (!vscode.workspace.fs.stat(vscode.Uri.file(customPath))) {
@@ -71,7 +72,7 @@ export class ExtentionConfig implements ExtentionConfigInterface {
     return path.dirname(require.main?.filename || process.cwd());
   }
 
-  private get_current_theme_json_path() {
+  get_current_theme_json_path() {
     const currentTheme = vscode.workspace
       .getConfiguration("workbench")
       .get<string>("colorTheme");
@@ -91,5 +92,11 @@ export class ExtentionConfig implements ExtentionConfigInterface {
       }
     }
     return "";
+  }
+
+  set_current_theme_json_path() {
+    const new_them_json_path = this.get_current_theme_json_path();
+    this.paths.current_theme_json = new_them_json_path;
+    return new_them_json_path;
   }
 }
