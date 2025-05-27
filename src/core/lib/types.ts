@@ -1,14 +1,14 @@
 import * as vscode from "vscode";
 
-export type Globals = {
-  init_extention_config: (extentionConfig: ExtentionConfig) => void;
-};
+// export type Globals = {
+//   init_extention_config: (extentionConfig: ExtentionConfig) => void;
+// };
 
 export type Paths = {
   css_file: string;
   js_file: string;
   app_root: string;
-  extension_uri: vscode.Uri;
+  extension: string;
   resources: string;
   images: string;
   current_theme_json: string;

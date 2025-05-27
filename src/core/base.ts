@@ -1,10 +1,11 @@
-import { ExtentionConfig } from './lib/types';
 import * as vscode from "vscode";
-import { globals } from "./lib/globales";
+import { ExtentionConfig } from "./lib/ExtentionConfig";
+import { Logger } from "../utils/logger";
 
 export function init_extension(context: vscode.ExtensionContext): void {
-    let extentionConfig = new ExtentionConfig();
-    globals.init_extention_config();
+  const logger = new Logger("init_extension");
+  let extentionConfig = new ExtentionConfig(context);
+  logger.config("extentionConfig", extentionConfig);
 }
 
 export function uninstall_extension(): void {}
