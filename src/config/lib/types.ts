@@ -13,4 +13,9 @@ export type Paths = {
 export type States = {
   is_purple_theme_enabled: boolean;
   is_fluent_ui_enabled: boolean;
+  is_css_js_injection_enabled: boolean;
 };
+
+export interface GlobalThis {
+  _VSCODE_FILE_ROOT?: string;
+}

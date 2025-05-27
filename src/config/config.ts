@@ -1,22 +1,35 @@
 import { ExtensionContext } from "vscode";
-import { Paths, States } from "./lib/types";
+import { GlobalThis, Paths, States } from "./lib/types";
 import * as vscode from "vscode";
 import path from "path";
 import { THEME_NAME } from "../utils/constants";
 import { ConfigInterface } from "./lib/interfaces";
+import { isCssJsInjectionEnabled } from "./lib/Helpers";
+
+declare const globalThis: GlobalThis;
 
 export class Config implements ConfigInterface {
   context: ExtensionContext;
   paths: Paths;
   states: States;
+  extention_uri: vscode.Uri;
 
   constructor(context: ExtensionContext) {
-    const tempExtensionPath = this.get_extention_path().fsPath;
+    const tempExtentionUri = this.get_extention_uri();
+    const tempExtensionPath = tempExtentionUri.fsPath;
     const tempAppRoot = this.get_app_root_path();
     const tempVsCodeBase = path.join(tempAppRoot, "vs", "code");
-
-    // init config
-    this.context = context;
+    const tempWorkbenchHtmlFile = path.join(
+      tempVsCodeBase,
+      "electron-sandbox",
+      "workbench",
+      "workbench.html",
+    );
+    let tempIsCssJsInjectionEnabled = false;
+    isCssJsInjectionEnabled(tempWorkbenchHtmlFile).then((is_enabled) => {
+      tempIsCssJsInjectionEnabled = is_enabled;
+    }),
+      (this.context = context);
     this.paths = {
       extension: tempExtensionPath,
       css_file: this.get_custom_path("custom.css", tempExtensionPath),
@@ -26,12 +39,7 @@ export class Config implements ConfigInterface {
       images: path.join(tempExtensionPath, "resources", "images"),
       current_theme_json: this.get_current_theme_json_path(),
       vs_code_base: tempVsCodeBase,
-      workbench_html_file: path.join(
-        tempVsCodeBase,
-        "electron-sandbox",
-        "workbench",
-        "workbench.html",
-      ),
+      workbench_html_file: tempWorkbenchHtmlFile,
     };
     this.states = {
       is_purple_theme_enabled:
@@ -39,7 +47,9 @@ export class Config implements ConfigInterface {
           .getConfiguration("workbench")
           .get<string>("colorTheme") === THEME_NAME,
       is_fluent_ui_enabled: false,
+      is_css_js_injection_enabled: tempIsCssJsInjectionEnabled,
     };
+    this.extention_uri = tempExtentionUri;
   }
 
   private get_custom_path(filename: string, extention_path: string) {
@@ -56,7 +66,7 @@ export class Config implements ConfigInterface {
     return customPath;
   }
 
-  private get_extention_path() {
+  private get_extention_uri() {
     const extensionUri = vscode.extensions.getExtension(
       "Ali-Kabbadj.theme-editor-pro",
     )?.extensionUri;
@@ -69,7 +79,9 @@ export class Config implements ConfigInterface {
   }
 
   private get_app_root_path() {
-    return path.dirname(require.main?.filename || process.cwd());
+    return require.main
+      ? path.dirname(require.main.filename)
+      : globalThis._VSCODE_FILE_ROOT || "";
   }
 
   get_current_theme_json_path() {

@@ -29,7 +29,7 @@
     "views": {
       "custom-ui-container": [
         {
-          "id": "customUiSidebar",
+          "id": "SidebarUI",
           "name": "Theme Editor Pro",
           "icon": "resources/images/icon-sidebar.svg",
           "type": "webview"
