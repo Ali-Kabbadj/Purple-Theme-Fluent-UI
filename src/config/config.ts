@@ -1,11 +1,9 @@
-import { config } from "process";
 import { ExtensionContext } from "vscode";
 import { GlobalThis, Paths, States } from "./lib/types";
 import * as vscode from "vscode";
 import path from "path";
 import { THEME_NAME } from "../utils/constants";
 import { ConfigInterface } from "./lib/interfaces";
-import { isCssJsInjectionEnabled } from "./lib/Helpers";
 
 declare const globalThis: GlobalThis;
 
@@ -14,6 +12,11 @@ export class Config implements ConfigInterface {
   paths: Paths;
   states: States;
   extention_uri: vscode.Uri;
+  public set_current_theme_json_path() {
+    const new_them_json_path = this.get_current_theme_json_path();
+    this.paths.current_theme_json = new_them_json_path;
+    return new_them_json_path;
+  }
 
   constructor(context: ExtensionContext) {
     const tempExtentionUri = this.get_extention_uri();
@@ -30,8 +33,16 @@ export class Config implements ConfigInterface {
     this.context = context;
     this.paths = {
       extension: tempExtensionPath,
-      css_file: this.get_custom_path("custom.css", tempExtensionPath),
-      js_file: this.get_custom_path("custom.js", tempExtensionPath),
+      css_file: this.get_injectable_file_path("custom.css", tempExtensionPath),
+      js_file: this.get_injectable_file_path("custom.js", tempExtensionPath),
+      fluent_ui_css_file: this.get_injectable_file_path(
+        "fluent-ui.css",
+        tempExtensionPath,
+      ),
+      fluent_ui_js_file: this.get_injectable_file_path(
+        "fluent-ui.js",
+        tempExtensionPath,
+      ),
       app_root: tempAppRoot,
       resources: path.join(tempExtensionPath, "resources"),
       images: path.join(tempExtensionPath, "resources", "images"),
@@ -44,7 +55,6 @@ export class Config implements ConfigInterface {
         vscode.workspace
           .getConfiguration("workbench")
           .get<string>("colorTheme") === THEME_NAME,
-      is_fluent_ui_enabled: false,
       is_css_js_injection_enabled: false,
     };
     this.extention_uri = tempExtentionUri;
@@ -54,7 +64,7 @@ export class Config implements ConfigInterface {
     this.states.is_css_js_injection_enabled = isEnabled;
   }
 
-  private get_custom_path(filename: string, extention_path: string) {
+  private get_injectable_file_path(filename: string, extention_path: string) {
     const customPath = path.join(
       extention_path,
       "resources",
@@ -86,7 +96,7 @@ export class Config implements ConfigInterface {
       : globalThis._VSCODE_FILE_ROOT || "";
   }
 
-  get_current_theme_json_path() {
+  private get_current_theme_json_path() {
     const currentTheme = vscode.workspace
       .getConfiguration("workbench")
       .get<string>("colorTheme");
@@ -106,11 +116,5 @@ export class Config implements ConfigInterface {
       }
     }
     return "";
-  }
-
-  set_current_theme_json_path() {
-    const new_them_json_path = this.get_current_theme_json_path();
-    this.paths.current_theme_json = new_them_json_path;
-    return new_them_json_path;
   }
 }

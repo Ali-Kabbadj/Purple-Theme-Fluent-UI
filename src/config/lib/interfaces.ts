@@ -6,5 +6,5 @@ export interface ConfigInterface {
   paths: Paths;
   states: States;
   extention_uri: vscode.Uri;
-  get_current_theme_json_path: () => string;
+  set_current_theme_json_path: () => string;
 }

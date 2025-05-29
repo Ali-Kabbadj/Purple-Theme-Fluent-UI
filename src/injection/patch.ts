@@ -18,11 +18,11 @@ export async function patch_clean_workbench(config: Config) {
     cleanWorkspaceFilePath,
     "utf-8",
   );
-  const patches = await get_all_patchs(config);
+  const patches = await get_all_patches(config);
   await apply_patches(config, patches, cleanWorkspaceFile);
 }
 
-async function apply_patches(
+export async function apply_patches(
   config: Config,
   patches: string,
   cleanWorkspaceFile: string,
@@ -46,14 +46,14 @@ async function apply_patches(
   );
 }
 
-async function get_all_patchs(config: Config) {
+async function get_all_patches(config: Config) {
   let res = "";
   res += await put_file_content_in_appropriate_tag(config.paths.css_file);
   res += await put_file_content_in_appropriate_tag(config.paths.js_file);
   return res;
 }
 
-async function put_file_content_in_appropriate_tag(file_path: string) {
+export async function put_file_content_in_appropriate_tag(file_path: string) {
   let file_url = new Url.URL(file_path);
   const ext = path.extname(file_url.pathname);
 

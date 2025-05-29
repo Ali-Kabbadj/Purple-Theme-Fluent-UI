@@ -8,7 +8,8 @@
       "default",
       {
         "ignore": [
-          "backdrop-filter"
+          "backdrop-filter",
+          "-webkit-mask-size"
         ]
       }
     ]

@@ -6,13 +6,16 @@ import { create_clean_workspace_backup } from "../injection/unpatch/backup";
 import { config } from "process";
 import { patch_clean_workbench } from "../injection/patch";
 import { restore_workspace_to_clean } from "../injection/unpatch/restore";
+import {
+  patch_clean_workbench_with_purple_fluent_ui,
+  set_workspace_theme,
+} from "../purple-fluent-ui/patch";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "SidebarUI";
   private _view?: vscode.WebviewView;
   private _isCssJsInjectionEnabled: boolean = false;
   private _isPurpleThemeEnabled: boolean = false;
-  private _isFluentUIEnabeld: boolean = false;
   private _config: Config;
 
   constructor(confg: Config) {
@@ -24,7 +27,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   private async initialize(confg: Config) {
     this._isCssJsInjectionEnabled = confg.states.is_css_js_injection_enabled;
     this._isPurpleThemeEnabled = confg.states.is_purple_theme_enabled;
-    this._isFluentUIEnabeld = confg.states.is_fluent_ui_enabled;
   }
 
   private _refreshWebview(config: Config): void {
@@ -82,38 +84,38 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                 );
               })();
           break;
+        case "toggleThemeEnabled":
+          message.value
+            ? (async () => {
+                await patch_clean_workbench_with_purple_fluent_ui(this._config);
+                await this._promptRestart(
+                  "Fluent UI Applied! Restart to finalize.",
+                );
+              })()
+            : (async () => {
+                await set_workspace_theme("Default Dark Modern");
+                await restore_workspace_to_clean(this._config);
+                await this._promptRestart(
+                  "Fluent UI Removed! Restart to finalize.",
+                );
+              })();
+          break;
+        case "openCssFile":
+          this._openFile(this._config.paths.css_file);
+          break;
+        case "openJsFile":
+          this._openFile(this._config.paths.js_file);
+          break;
+        case "resetCssFile":
+          this._resetFile(this._config.paths.css_file);
+          break;
+        case "resetJsFile":
+          this._resetFile(this._config.paths.js_file);
+          break;
+        case "openThemeFile":
+          this._openFile(this._config.paths.current_theme_json);
+          break;
       }
-      //   switch (message.command) {
-      //     case "toggleInjectionEnabled":
-      //       // Execute enable/disable command based on checkbox state
-      //       const injectionCommand = message.value
-      //         ? "theme-editor-pro.installCssJsInjection"
-      //         : "theme-editor-pro.uninstallCssJsInjection";
-      //       vscode.commands.executeCommand(injectionCommand);
-      //       break;
-      //     case "toggleThemeEnabled":
-      //       // Execute theme enable/disable command based on checkbox state
-      //       const themeCommand = message.value
-      //         ? "theme-editor-pro.enableTheme"
-      //         : "theme-editor-pro.disableTheme";
-      //       vscode.commands.executeCommand(themeCommand);
-      //       break;
-      //     case "openCssFile":
-      //       this._openFile(globals.extentionConfig?.cssUri || "");
-      //       break;
-      //     case "openJsFile":
-      //       this._openFile(globals.extentionConfig?.jsUri || "");
-      //       break;
-      //     case "resetCssFile":
-      //       this._resetFile(globals.extentionConfig?.cssUri || "");
-      //       break;
-      //     case "resetJsFile":
-      //       this._resetFile(globals.extentionConfig?.jsUri || "");
-      //       break;
-      //     case "openThemeFile":
-      //       this._openFile(globals.currentThemeJsonPath || "");
-      //       break;
-      //   }
     });
   }
 
@@ -304,11 +306,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           </div>
         </div>
 
-        <div class="section">
+        <div class="section" >
           <div class="checkbox-container">
-            <input type="checkbox" id="toggleInjectionEnabled" ${
-              this._isCssJsInjectionEnabled ? "checked" : ""
-            } />
+            <input ${this._isPurpleThemeEnabled ? "disabled" : ""}
+             type="checkbox" id="toggleInjectionEnabled" ${
+               this._isCssJsInjectionEnabled ? "checked" : ""
+             } />
             <label for="toggleInjectionEnabled">${
               this._isCssJsInjectionEnabled ? "Disable" : "Enable"
             }} CSS/JS Injection</label>

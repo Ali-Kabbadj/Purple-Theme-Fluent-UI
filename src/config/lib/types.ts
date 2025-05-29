@@ -1,6 +1,8 @@
 export type Paths = {
   css_file: string;
   js_file: string;
+  fluent_ui_css_file: string;
+  fluent_ui_js_file: string;
   app_root: string;
   extension: string;
   resources: string;
@@ -12,7 +14,6 @@ export type Paths = {
 
 export type States = {
   is_purple_theme_enabled: boolean;
-  is_fluent_ui_enabled: boolean;
   is_css_js_injection_enabled: boolean;
 };
 
