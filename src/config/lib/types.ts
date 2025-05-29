@@ -3,6 +3,7 @@ export type Paths = {
   js_file: string;
   fluent_ui_css_file: string;
   fluent_ui_js_file: string;
+  fluent_ui_js_file_compiled: string;
   app_root: string;
   extension: string;
   resources: string;

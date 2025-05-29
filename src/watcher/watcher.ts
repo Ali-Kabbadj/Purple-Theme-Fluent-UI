@@ -1,4 +1,8 @@
 import { Config } from "../config/config";
+import { patch_clean_workbench } from "../injection/patch";
+import { create_clean_workspace_backup } from "../injection/unpatch/backup";
+import { restore_workspace_to_clean } from "../injection/unpatch/restore";
+import { patch_clean_workbench_with_purple_fluent_ui } from "../purple-fluent-ui/patch";
 import { WatcherInterface } from "./lib/interfaces";
 import * as fs from "fs";
 import * as vscode from "vscode";
@@ -65,7 +69,15 @@ export class Watcher implements WatcherInterface {
             console.log(
               `[current_theme_json_file_changed_watcher] Theme file (${filename}) changed (${eventType})`,
             );
-            // to do : prompt user to restart
+            const choice = await vscode.window.showInformationMessage(
+              "Detected Theme Json file change",
+              "Restart Now",
+            );
+            if (choice === "Restart Now") {
+              await vscode.commands.executeCommand(
+                "workbench.action.reloadWindow",
+              );
+            }
           },
         );
       } catch (err) {
@@ -82,6 +94,20 @@ export class Watcher implements WatcherInterface {
         console.log(
           `[custom_css_file_changed_watcher] (${filename}) changed (${eventType})`,
         );
+        if (config.states.is_purple_theme_enabled) {
+          await patch_clean_workbench_with_purple_fluent_ui(config);
+        } else if (config.states.is_css_js_injection_enabled) {
+          await restore_workspace_to_clean(config);
+          await create_clean_workspace_backup(config);
+          await patch_clean_workbench(config);
+        }
+        const choice = await vscode.window.showInformationMessage(
+          "Detected CSS file change",
+          "Restart Now",
+        );
+        if (choice === "Restart Now") {
+          await vscode.commands.executeCommand("workbench.action.reloadWindow");
+        }
         //   to do:
         // 1 - remove css js injection by restoring defautl wrokbench
         // 2 - if fluent ui was enabled before we need to re-apply it
@@ -98,6 +124,20 @@ export class Watcher implements WatcherInterface {
         console.log(
           `[custom_js_file_changed_watcher] (${filename}) changed (${eventType})`,
         );
+        if (config.states.is_purple_theme_enabled) {
+          await patch_clean_workbench_with_purple_fluent_ui(config);
+        } else if (config.states.is_css_js_injection_enabled) {
+          await restore_workspace_to_clean(config);
+          await create_clean_workspace_backup(config);
+          await patch_clean_workbench(config);
+        }
+        const choice = await vscode.window.showInformationMessage(
+          "Detected JS file change",
+          "Restart Now",
+        );
+        if (choice === "Restart Now") {
+          await vscode.commands.executeCommand("workbench.action.reloadWindow");
+        }
         //   to do:
         // 1 - remove css js injection by restoring defautl wrokbench
         // 2 - if fluent ui was enabled before we need to re-apply it

@@ -67,3 +67,4 @@ export async function put_file_content_in_appropriate_tag(file_path: string) {
     return `<script>${fetched}</script>`;
   }
 }
+

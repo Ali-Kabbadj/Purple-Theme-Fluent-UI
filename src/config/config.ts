@@ -43,6 +43,12 @@ export class Config implements ConfigInterface {
         "fluent-ui.js",
         tempExtensionPath,
       ),
+      fluent_ui_js_file_compiled: path.join(
+        tempVsCodeBase,
+        "electron-sandbox",
+        "workbench",
+        "fluent-ui-compiled.js",
+      ),
       app_root: tempAppRoot,
       resources: path.join(tempExtensionPath, "resources"),
       images: path.join(tempExtensionPath, "resources", "images"),
