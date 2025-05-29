@@ -110,7 +110,8 @@ Use the intuitive checkboxes to enable:
 ### **Step 3: Customize**
 
 - Click **"Open Custom CSS File"** to start styling
-- Click **"Open Custom JS File"** for advanced customization
+- Click **"Open Custom JS File"** for js/advanced customization
+- Click **"Open Theme Json File"** to customize the json of the current theme (workbench active theme)
 - Changes are applied instantly with hot reload!
 
 ---
@@ -130,7 +131,8 @@ _Experience the perfect harmony of purple aesthetics and modern Fluent UI design
 - **Deep Purple**: `#2D1B3D` - Sidebar and secondary elements
 
 ### **🎪 Theme Features**
-
+- **Customizability** - Full controll over all aspects of theming
+- **Hot-Reload** - not really, but all configurable files have watchers that get triggered on change to prompt the user for a restart
 - **Modern Fluent UI Integration** - Seamless Microsoft Fluent design language
 - **Eye-friendly Purple Tones** - Optimized for extended coding sessions
 - **High Contrast Elements** - Perfect readability in all lighting conditions
@@ -184,21 +186,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 ---
 
-## 🛠️ **Commands & Usage**
-
-### **Available Commands**
-
-- `theme-editor-pro.enableTheme` - Enable Purple Fluent UI Theme
-- `theme-editor-pro.disableTheme` - Disable Purple Fluent UI Theme
-- `theme-editor-pro.installCssJsInjection` - Enable CSS/JS Injection
-- `theme-editor-pro.uninstallCssJsInjection` - Disable CSS/JS Injection
-
-### **Keyboard Shortcuts**
-
-You can assign custom keyboard shortcuts via:
-`File → Preferences → Keyboard Shortcuts`
-
----
 
 ## ⚠️ **Important Notes**
 
@@ -214,9 +201,7 @@ _For CSS/JS injection to work properly_
 
 ### **🔄 Restart Recommendations**
 
-- Enable features **one at a time** for stability
-- Restart VS Code after major changes
-- Use the built-in backup system for safety (to be implimented, for now there is auto backup/restore implimented), or you can backup you workbend.html yourself.
+- Restart VS Code after major changes (restart prompt).
 
 ### **📁 File Management**
 
@@ -295,7 +280,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](https://g
 ## 🙏 **Acknowledgments**
 
 - **<img src="https://avatars.githubusercontent.com/u/6154722?s=200&v=4" alt="Custom CSS and JS Loader Banner" width="16"> [Microsoft](https://github.com/microsoft)** - For the amazing VS Code platform
-- **<img src="https://raw.githubusercontent.com/Night-Star04/vscode-fluent-ui/refs/heads/main/images/icon.png" alt="Custom CSS and JS Loader Banner" width="16"> [Fluent UI for VSCode (Continued)](https://github.com/Night-Star04/vscode-fluent-ui)** - For their beautiful UI (required for my purple theme)
+- **<img src="https://raw.githubusercontent.com/Night-Star04/vscode-fluent-ui/refs/heads/main/images/icon.png" alt="Custom CSS and JS Loader Banner" width="16"> [Fluent UI for VSCode (Continued)](https://github.com/Night-Star04/vscode-fluent-ui)** - For their beautiful UI
 - **<img src="https://github.com/be5invis/vscode-custom-css/blob/master/images/logo.png" alt="Custom CSS and JS Loader Banner" width="16"> [Custom CSS and JS Loader](https://github.com/be5invis/vscode-custom-css))** - For the workbench backup/restore and css/js injection workflow.
 
 ---
