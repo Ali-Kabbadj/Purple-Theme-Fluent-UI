@@ -2,6 +2,10 @@ import path from "path";
 import * as vscode from "vscode";
 import { Config } from "../config/config";
 import * as fs from "fs";
+import { create_clean_workspace_backup } from "../injection/unpatch/backup";
+import { config } from "process";
+import { patch_clean_workbench } from "../injection/patch";
+import { restore_workspace_to_clean } from "../injection/unpatch/restore";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "SidebarUI";
@@ -30,6 +34,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  private async _promptRestart(message: string) {
+    const choice = await vscode.window.showInformationMessage(
+      message,
+      "Restart Now",
+    );
+    if (choice === "Restart Now") {
+      await vscode.commands.executeCommand("workbench.action.reloadWindow");
+    }
+  }
+
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
@@ -50,6 +64,25 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     // Handle messages from the webview
     webviewView.webview.onDidReceiveMessage(async (message) => {
       console.log("Message received from webview:", message);
+      switch (message.command) {
+        case "toggleInjectionEnabled":
+          // Execute enable/disable command based on checkbox state
+          message.value
+            ? (async () => {
+                await create_clean_workspace_backup(this._config);
+                await patch_clean_workbench(this._config);
+                await this._promptRestart(
+                  "CSS/JS injection complete. Restart to finalize.",
+                );
+              })()
+            : (async () => {
+                await restore_workspace_to_clean(this._config);
+                await this._promptRestart(
+                  "CSS/JS injection removed. Restart to finalize.",
+                );
+              })();
+          break;
+      }
       //   switch (message.command) {
       //     case "toggleInjectionEnabled":
       //       // Execute enable/disable command based on checkbox state

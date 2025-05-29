@@ -1,3 +1,4 @@
+import { config } from "process";
 import { ExtensionContext } from "vscode";
 import { GlobalThis, Paths, States } from "./lib/types";
 import * as vscode from "vscode";
@@ -25,11 +26,8 @@ export class Config implements ConfigInterface {
       "workbench",
       "workbench.html",
     );
-    let tempIsCssJsInjectionEnabled = false;
-    isCssJsInjectionEnabled(tempWorkbenchHtmlFile).then((is_enabled) => {
-      tempIsCssJsInjectionEnabled = is_enabled;
-    }),
-      (this.context = context);
+
+    this.context = context;
     this.paths = {
       extension: tempExtensionPath,
       css_file: this.get_custom_path("custom.css", tempExtensionPath),
@@ -47,9 +45,13 @@ export class Config implements ConfigInterface {
           .getConfiguration("workbench")
           .get<string>("colorTheme") === THEME_NAME,
       is_fluent_ui_enabled: false,
-      is_css_js_injection_enabled: tempIsCssJsInjectionEnabled,
+      is_css_js_injection_enabled: false,
     };
     this.extention_uri = tempExtentionUri;
+  }
+
+  public set_is_css_js_injection_enabled(isEnabled: boolean) {
+    this.states.is_css_js_injection_enabled = isEnabled;
   }
 
   private get_custom_path(filename: string, extention_path: string) {
