@@ -204,40 +204,63 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       });
   }
 
-  // Helper function to convert color to rgba format with alpha
-  private _convertToRgba(color: string, alpha: number = 1): string {
+  // Helper function to convert color to hex format with alpha (#rrggbbaa)
+  private _convertToHex(color: string): string {
     if (color === "transparent") {
-      return "transparent";
+      return "#00000000";
     }
 
-    // If it's already rgba, return as is
-    if (color.startsWith("rgba")) {
+    // If it's already hex with alpha, return as is
+    if (color.startsWith("#") && color.length === 9) {
       return color;
     }
 
-    // Convert hex to rgba
-    if (color.startsWith("#")) {
-      const hex = color.slice(1);
-      const r = parseInt(hex.substr(0, 2), 16);
-      const g = parseInt(hex.substr(2, 2), 16);
-      const b = parseInt(hex.substr(4, 2), 16);
-      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    // If it's hex without alpha, add full alpha
+    if (color.startsWith("#") && color.length === 7) {
+      return color + "ff";
+    }
+
+    // Convert rgba to hex
+    if (color.startsWith("rgba")) {
+      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*([^)]+)\)/);
+      if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        const a = Math.round(parseFloat(match[4]) * 255);
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b)
+          .toString(16)
+          .slice(1)}${a.toString(16).padStart(2, "0")}`;
+      }
+    }
+
+    // Convert rgb to hex with full alpha
+    if (color.startsWith("rgb")) {
+      const match = color.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+      if (match) {
+        const r = parseInt(match[1]);
+        const g = parseInt(match[2]);
+        const b = parseInt(match[3]);
+        return `#${((1 << 24) + (r << 16) + (g << 8) + b)
+          .toString(16)
+          .slice(1)}ff`;
+      }
     }
 
     return color;
   }
 
-  // Helper function to extract hex color from rgba
-  private _extractHexFromRgba(color: string): string {
+  // Helper function to extract hex color from any format
+  private _extractHexFromColor(color: string): string {
     if (color === "transparent" || !color) {
       return "#000000";
     }
 
     if (color.startsWith("#")) {
-      return color;
+      return color.length >= 7 ? color.substring(0, 7) : color;
     }
 
-    if (color.startsWith("rgba")) {
+    if (color.startsWith("rgba") || color.startsWith("rgb")) {
       const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
       if (match) {
         const r = parseInt(match[1]);
@@ -252,15 +275,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     return color;
   }
 
-  // Helper function to extract alpha from rgba
-  private _extractAlphaFromRgba(color: string): number {
+  // Helper function to extract alpha from any color format
+  private _extractAlphaFromColor(color: string): number {
     if (color === "transparent") {
       return 0;
     }
-    if (!color || color.startsWith("#")) {
+
+    if (!color) {
       return 1;
     }
 
+    // Extract alpha from hex format (#rrggbbaa)
+    if (color.startsWith("#") && color.length === 9) {
+      const alphaHex = color.substring(7, 9);
+      return parseInt(alphaHex, 16) / 255;
+    }
+
+    // Extract alpha from rgba format
     if (color.startsWith("rgba")) {
       const match = color.match(/rgba?\([^,]+,[^,]+,[^,]+,\s*([^)]+)\)/);
       if (match) {
@@ -298,14 +329,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     );
 
     // Extract hex values and alpha values for the UI
-    const accentHex = this._extractHexFromRgba(accentColor);
-    const accentAlpha = this._extractAlphaFromRgba(accentColor);
-    const darkHex = this._extractHexFromRgba(darkColor);
-    const darkAlpha = this._extractAlphaFromRgba(darkColor);
-    const lightHex = this._extractHexFromRgba(lightColor);
-    const lightAlpha = this._extractAlphaFromRgba(lightColor);
-    const backgroundHex = this._extractHexFromRgba(backgroundColor);
-    const backgroundAlpha = this._extractAlphaFromRgba(backgroundColor);
+    const accentHex = this._extractHexFromColor(accentColor);
+    const accentAlpha = this._extractAlphaFromColor(accentColor);
+    const darkHex = this._extractHexFromColor(darkColor);
+    const darkAlpha = this._extractAlphaFromColor(darkColor);
+    const lightHex = this._extractHexFromColor(lightColor);
+    const lightAlpha = this._extractAlphaFromColor(lightColor);
+    const backgroundHex = this._extractHexFromColor(backgroundColor);
+    const backgroundAlpha = this._extractAlphaFromColor(backgroundColor);
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -609,12 +640,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         (function() {
           const vscode = acquireVsCodeApi();
 
-          // Helper function to convert hex and alpha to rgba
-          function hexToRgba(hex, alpha) {
-            const r = parseInt(hex.slice(1, 3), 16);
-            const g = parseInt(hex.slice(3, 5), 16);
-            const b = parseInt(hex.slice(5, 7), 16);
-            return \`rgba(\${r}, \${g}, \${b}, \${alpha})\`;
+          // Helper function to convert hex and alpha to hex with alpha (#rrggbbaa)
+          function hexToHexAlpha(hex, alpha) {
+            const alphaHex = Math.round(alpha * 255).toString(16).padStart(2, '0');
+            return hex + alphaHex;
           }
 
           // Helper function to send theme editor setting update
@@ -626,16 +655,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             });
           }
 
-          // Helper function to update color with alpha
+          // Helper function to update color with alpha in hex format
           function updateColorSetting(colorId, alphaId, settingKey) {
             const colorElement = document.getElementById(colorId);
             const alphaElement = document.getElementById(alphaId);
             
             const color = colorElement.value;
             const alpha = parseFloat(alphaElement.value);
-            const rgba = hexToRgba(color, alpha);
+            const hexWithAlpha = hexToHexAlpha(color, alpha);
             
-            updateThemeEditorSetting(settingKey, rgba);
+            updateThemeEditorSetting(settingKey, hexWithAlpha);
           }
 
           // Debounce function to delay execution
@@ -744,7 +773,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             });
           });
 
-
            document.getElementById('resetThemeEditorSettingBtn').addEventListener('click', () => {
             vscode.postMessage({
               command: 'resetThemeEditorSetting'
@@ -756,37 +784,3 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     </html>`;
   }
 }
-
-// <div class="color-row">
-//   <label class="color-label">Light Color:</label>
-//   <div class="color-controls">
-//     <div class="color-input-row">
-//       <input
-//         type="color"
-//         class="color-input"
-//         id="lightColor"
-//         value="${lightHex}"
-//       />
-//       <input
-//         type="range"
-//         class="alpha-slider"
-//         id="lightAlpha"
-//         min="0"
-//         max="1"
-//         step="0.01"
-//         value="${lightAlpha}"
-//       />
-//       <span class="alpha-value" id="lightAlphaValue">
-//         ${Math.round(lightAlpha * 100)}%
-//       </span>
-//     </div>
-//   </div>
-// </div>;
-//  // Light Color Event Listeners
-//  document.getElementById('lightColor').addEventListener('change', (e) => {
-//   updateColorSetting('lightColor', 'lightAlpha', 'theme-editor-pro.light-color');
-// });
-// document.getElementById('lightAlpha').addEventListener('input', (e) => {
-//   document.getElementById('lightAlphaValue').textContent = Math.round(e.target.value * 100) + '%';
-//   debouncedLightUpdate();
-// });

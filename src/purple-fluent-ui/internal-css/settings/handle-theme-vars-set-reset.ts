@@ -77,11 +77,11 @@ function getThemePaths(config: Config): { main: string; backup: string } {
 /**
  * Update a specific property in the theme JSON content without affecting formatting
  */
-function updateThemePropertyInContent(
+async function updateThemePropertyInContent(
   content: string,
   propertyPath: string,
   newValue: string,
-): { updated: boolean; content: string } {
+): Promise<{ updated: boolean; content: string }> {
   const lines = content.split("\n");
   let updated = false;
 
@@ -176,11 +176,11 @@ function updateThemePropertyInContent(
  * Add a new property to the theme JSON content
  * Fixed version with better nested property handling
  */
-function addThemePropertyToContent(
+async function addThemePropertyToContent(
   content: string,
   propertyPath: string,
   value: string,
-): string {
+): Promise<string> {
   const lines = content.split("\n");
   const propertyParts = propertyPath.split(".");
 
@@ -366,7 +366,7 @@ export async function set_theme_property(
     const content = await readThemeFile(main);
 
     // Try to update existing property
-    const updateResult = updateThemePropertyInContent(
+    const updateResult = await updateThemePropertyInContent(
       content,
       propertyPath,
       value,
@@ -377,7 +377,11 @@ export async function set_theme_property(
       finalContent = updateResult.content;
     } else {
       // Property doesn't exist, add it
-      finalContent = addThemePropertyToContent(content, propertyPath, value);
+      finalContent = await addThemePropertyToContent(
+        content,
+        propertyPath,
+        value,
+      );
     }
 
     // Write updated content
@@ -412,7 +416,7 @@ export async function set_theme_property_with_var(
 export async function apply_theme_mappings(
   config: Config,
   themeMapping: ThemePropertyConfig = THEME_PROPERTY_MAPPING,
-): Promise<void> {
+): Promise<boolean> {
   try {
     const appliedProperties: string[] = [];
 
@@ -427,8 +431,9 @@ export async function apply_theme_mappings(
     }
 
     console.log("Applied theme mappings:", appliedProperties);
+    return true;
   } catch (error) {
-    throw new Error(`Failed to apply theme mappings: ${error}`);
+    return false;
   }
 }
 
@@ -446,7 +451,7 @@ export async function reset_theme_property(
     const backupContent = await readThemeFile(backup);
 
     // Extract the property value from backup
-    const backupUpdateResult = updateThemePropertyInContent(
+    const backupUpdateResult = await updateThemePropertyInContent(
       backupContent,
       propertyPath,
       "PLACEHOLDER",

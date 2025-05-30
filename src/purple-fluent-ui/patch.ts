@@ -23,14 +23,17 @@ import {
 } from "../injection/patch";
 import { FetchInternalCss } from "./internal-css/internals";
 import { getUserThemeVarsWithDefaultsAsync } from "./user-vars/handle_user_vars";
-import { apply_theme_mappings, set_theme_property } from "./internal-css/settings/handle-theme-vars-set-reset";
+import {
+  apply_theme_mappings,
+  set_theme_property,
+} from "./internal-css/settings/handle-theme-vars-set-reset";
 
 export async function patch_clean_workbench_with_purple_fluent_ui(
   config: Config,
 ) {
-  // set workspace theme
+  // modify and set workspace theme
+  const res = await apply_theme_mappings(config);
   await set_workspace_theme(THEME_NAME);
-
   //first we check if there is a backup file, if so we restore to default
   const cleanWorkspaceFilePath = path.join(
     config.paths.vs_code_base,
@@ -56,7 +59,7 @@ export async function patch_clean_workbench_with_purple_fluent_ui(
   const patches = await get_all_fluent_ui_patches(config);
   await configure_fluent_ui_js_file_vars(config);
   await apply_patches(config, patches, cleanWorkspaceFile);
-  await apply_theme_mappings(config);
+  return;
 }
 
 async function get_all_fluent_ui_patches(config: Config) {
@@ -102,24 +105,23 @@ async function get_combined_custom_css_fluent_ui_css(config: Config) {
 
   const userVars = await getUserThemeVarsWithDefaultsAsync(config);
 
-  const darkBgColor = userVars["dark-color"];
-  const accent = userVars.accent;
-  const background = userVars.background;
+  const darkBgColor = userVars["dark-color"] || THEME_DARK_BACKGROUND;
+  const accent = userVars.accent || THEME_ACCENT;
+  const background = userVars.background || THEME_BACKGROUND;
 
-  internalFetched = internalFetched.replaceAll(
-    "THEME_BACKGROUND",
-    background || THEME_BACKGROUND,
-  );
+  // Strip alpha from an 8-digit hex (#RRGGBBAA → #RRGGBB)
+  const stripHexAlpha = (c: string) =>
+    c.startsWith("#") && c.length === 9
+      ? c.slice(0, 7) // "#RRGGBBAA" → "#RRGGBB"
+      : c;
 
-  internalFetched = internalFetched.replaceAll(
-    "THEME_DARK_BACKGROUND",
-    darkBgColor || THEME_DARK_BACKGROUND,
-  );
+  const darkBgNoAlpha = stripHexAlpha(darkBgColor);
 
-  internalFetched = internalFetched.replaceAll(
-    "THEME_ACCENT",
-    accent || THEME_ACCENT,
-  );
+  internalFetched = internalFetched
+    .replaceAll("THEME_BACKGROUND", background)
+    .replaceAll("THEME_DARK_BACKGROUND_NO_ALPHA", darkBgNoAlpha)
+    .replaceAll("THEME_DARK_BACKGROUND", darkBgColor)
+    .replaceAll("THEME_ACCENT", accent);
 
   return `<style> ${fetched_fluent_ui_css} ${internalFetched} ${fetched_custom_css}</style>`;
 }

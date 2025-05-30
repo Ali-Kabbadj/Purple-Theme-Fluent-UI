@@ -15,6 +15,12 @@ export const iconsAndSvgs = `
   background-color: THEME_BACKGROUND !important;
 }
 
+
+
+.terminal {
+    background-color: transparent !important;
+}
+
 .monaco-workbench
   .part.titlebar
   > .titlebar-container
@@ -41,7 +47,7 @@ export const iconsAndSvgs = `
 
 
 .monaco-workbench .xterm .xterm-scrollable-element {
-  background-color: THEME_DARK_BACKGROUND !important;
+      background-color: transparent !important;
 }
 
 .xterm-dom-renderer-owner-1 .xterm-fg-257 {

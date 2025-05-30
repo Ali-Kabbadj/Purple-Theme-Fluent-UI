@@ -16,5 +16,4 @@ export async function restore_workspace_to_clean(config: Config) {
     config.paths.workbench_html_file,
   );
   await fs.promises.unlink(cleanWorkspaceFilePath);
-  await reset_theme_to_backup(config);
 }
