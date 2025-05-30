@@ -26,6 +26,36 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Theme Editor Pro Settings",
+      "properties": {
+        "theme-editor-pro.compact": {
+          "type": "boolean",
+          "default": false,
+          "description": "use compact ui"
+        },
+        "theme-editor-pro.accent": {
+          "type": "string",
+          "default": "#bc47ffdd",
+          "description": "accent color"
+        },
+        "theme-editor-pro.dark-color": {
+          "type": "string",
+          "default": "#0f0b17",
+          "description": "dark background color"
+        },
+        "theme-editor-pro.light-color": {
+          "type": "string",
+          "default": "#bc47ffdd",
+          "description": "ligth background color"
+        },
+        "theme-editor-pro.background": {
+          "type": "string",
+          "default": "transparent",
+          "description": "background color | transparent"
+        }
+      }
+    },
     "views": {
       "custom-ui-container": [
         {

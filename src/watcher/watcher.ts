@@ -2,6 +2,7 @@ import { Config } from "../config/config";
 import { patch_clean_workbench } from "../injection/patch";
 import { create_clean_workspace_backup } from "../injection/unpatch/backup";
 import { restore_workspace_to_clean } from "../injection/unpatch/restore";
+import { prompt_restart } from "../messaging/user_prompts";
 import { patch_clean_workbench_with_purple_fluent_ui } from "../purple-fluent-ui/patch";
 import { WatcherInterface } from "./lib/interfaces";
 import * as fs from "fs";
@@ -38,12 +39,6 @@ export class Watcher implements WatcherInterface {
             console.log(`to: (${new_theme})`);
             this.init_new_theme_json_file_changed_watcher(config);
           }
-          // Update sidebar to reflect new theme
-          // this.sidebarUiProvider?.updatePurpleThemeFuientUIStatus(
-          //   vscode.workspace
-          //     .getConfiguration("workbench")
-          //     .get<string>("colorTheme") === THEME_NAME,
-          // );
         }
       });
     this.config.context.subscriptions.push(
@@ -66,18 +61,9 @@ export class Watcher implements WatcherInterface {
           config.paths.current_theme_json,
           { encoding: "utf-8" },
           async (eventType, filename) => {
-            console.log(
-              `[current_theme_json_file_changed_watcher] Theme file (${filename}) changed (${eventType})`,
+            await prompt_restart(
+              `Detected Theme Json change in file ${filename}`,
             );
-            const choice = await vscode.window.showInformationMessage(
-              "Detected Theme Json file change",
-              "Restart Now",
-            );
-            if (choice === "Restart Now") {
-              await vscode.commands.executeCommand(
-                "workbench.action.reloadWindow",
-              );
-            }
           },
         );
       } catch (err) {
@@ -101,17 +87,7 @@ export class Watcher implements WatcherInterface {
           await create_clean_workspace_backup(config);
           await patch_clean_workbench(config);
         }
-        const choice = await vscode.window.showInformationMessage(
-          "Detected CSS file change",
-          "Restart Now",
-        );
-        if (choice === "Restart Now") {
-          await vscode.commands.executeCommand("workbench.action.reloadWindow");
-        }
-        //   to do:
-        // 1 - remove css js injection by restoring defautl wrokbench
-        // 2 - if fluent ui was enabled before we need to re-apply it
-        // 3 - we re-inject the css/js and we prompt user to restart
+        await prompt_restart("Detected CSS file change");
       },
     );
   }
@@ -131,17 +107,7 @@ export class Watcher implements WatcherInterface {
           await create_clean_workspace_backup(config);
           await patch_clean_workbench(config);
         }
-        const choice = await vscode.window.showInformationMessage(
-          "Detected JS file change",
-          "Restart Now",
-        );
-        if (choice === "Restart Now") {
-          await vscode.commands.executeCommand("workbench.action.reloadWindow");
-        }
-        //   to do:
-        // 1 - remove css js injection by restoring defautl wrokbench
-        // 2 - if fluent ui was enabled before we need to re-apply it
-        // 3 - we re-inject the css/js and we prompt user to restart
+        await prompt_restart("Detected JS file change");
       },
     );
   }

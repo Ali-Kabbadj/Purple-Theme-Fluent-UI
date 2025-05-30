@@ -1,0 +1,17 @@
+:root {
+  --card-bg: CARD_DARK_BG_COLOR;
+  --active-action-item-bg: var(--card-bg);
+  --activitybar-indicator-bg: #60cdff;
+  --app-bg: rgba(44, 44, 44, 0.85);
+  --background-color: rgba(0, 0, 0, 0.0578);
+  --card-blend-mode: color, luminosity;
+  --context-menu-bg: rgba(32, 32, 32, 0.75);
+  /* --editor-bg: rgba(32, 32, 32, 0.75); */
+  --editor-widget-bg: var(--card-bg);
+  --foreground: #ffffff;
+  --hover-bg: var(--card-bg);
+  --list-item-bg: rgba(255, 255, 255, 0.0605);
+  --list-item-fg: #ffffff99;
+  --notification-toast-bg: var(--card-bg);
+  --quick-input-widget-bg: var(--dark-bg);
+}

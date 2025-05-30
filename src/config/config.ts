@@ -33,21 +33,51 @@ export class Config implements ConfigInterface {
     this.context = context;
     this.paths = {
       extension: tempExtensionPath,
-      css_file: this.get_injectable_file_path("custom.css", tempExtensionPath),
-      js_file: this.get_injectable_file_path("custom.js", tempExtensionPath),
+      css_file: this.get_injectable_file_path(
+        "custom.css",
+        tempExtensionPath,
+        "customs",
+      ),
+      js_file: this.get_injectable_file_path(
+        "custom.js",
+        tempExtensionPath,
+        "customs",
+      ),
       fluent_ui_css_file: this.get_injectable_file_path(
         "fluent-ui.css",
         tempExtensionPath,
+        "customs",
+      ),
+      fluent_ui_css_dark_vars_file: this.get_injectable_file_path(
+        "fluent-ui-dark-vars.css",
+        tempExtensionPath,
+        "customs",
       ),
       fluent_ui_js_file: this.get_injectable_file_path(
         "fluent-ui.js",
         tempExtensionPath,
+        "customs",
+      ),
+      user_theme_vars_json_file: this.get_injectable_file_path(
+        "user-theme-vars.json",
+        tempExtensionPath,
+        "data",
       ),
       fluent_ui_js_file_compiled: path.join(
         tempVsCodeBase,
         "electron-sandbox",
         "workbench",
         "fluent-ui-compiled.js",
+      ),
+      our_theme_json: path.join(
+        tempExtensionPath,
+        "themes",
+        "purple-fluent-ui-color-theme.json",
+      ),
+      our_theme_json_backup: path.join(
+        tempExtensionPath,
+        "themes",
+        "purple-fluent-ui-color-theme-backup.json",
       ),
       app_root: tempAppRoot,
       resources: path.join(tempExtensionPath, "resources"),
@@ -70,11 +100,15 @@ export class Config implements ConfigInterface {
     this.states.is_css_js_injection_enabled = isEnabled;
   }
 
-  private get_injectable_file_path(filename: string, extention_path: string) {
+  private get_injectable_file_path(
+    filename: string,
+    extention_path: string,
+    subfolder: string,
+  ) {
     const customPath = path.join(
       extention_path,
       "resources",
-      "customs",
+      subfolder,
       filename,
     );
     if (!vscode.workspace.fs.stat(vscode.Uri.file(customPath))) {

@@ -7,7 +7,9 @@
       "request": "launch",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionDevelopmentPath=/path/to/NightSky-Studio.vscode-fluent-ui-continued"
+        "--disable-extension=ms-edgedevtools.vscode-edge-devtools",
+        "--disable-extension=github.copilot",
+        "--disable-extension=ms-vscode.vscode-json"
       ],
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       "preLaunchTask": "${defaultBuildTask}"

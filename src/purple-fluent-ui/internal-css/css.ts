@@ -11,6 +11,10 @@ export const iconsAndSvgs = `
   content: "";
 }
 
+.monaco-workbench{
+  background-color: THEME_BACKGROUND !important;
+}
+
 .monaco-workbench
   .part.titlebar
   > .titlebar-container
@@ -32,16 +36,16 @@ export const iconsAndSvgs = `
 }
 
 .editor-group-container.active.empty {
-    background-color: #0f0b17 !important;
+    background-color: THEME_DARK_BACKGROUND !important;
 }
 
 
 .monaco-workbench .xterm .xterm-scrollable-element {
-  background-color: #0f0b17 !important;
+  background-color: THEME_DARK_BACKGROUND !important;
 }
 
 .xterm-dom-renderer-owner-1 .xterm-fg-257 {
-  color: #0f0b17 !important;
+  color: THEME_DARK_BACKGROUND !important;
 }
 
 .monaco-workbench
@@ -70,10 +74,10 @@ export const iconsAndSvgs = `
 }
 
 li.action-item.start-debug-action-item {
-  background-color: #5f1983 !important;
+  background-color: THEME_ACCENT !important;
 }
 
 :root {
-  --vscode-focusBorder: #34264c !important;
+  --vscode-focusBorder: THEME_ACCENT !important;
 }
 `;

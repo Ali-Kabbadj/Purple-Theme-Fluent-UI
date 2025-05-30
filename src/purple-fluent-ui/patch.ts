@@ -1,4 +1,3 @@
-import { config } from "process";
 import { Config } from "../config/config";
 import path from "path";
 import fs, { constants } from "fs";
@@ -6,6 +5,7 @@ import * as vscode from "vscode";
 import {
   IS_COMPACT,
   THEME_ACCENT,
+  THEME_BACKGROUND,
   THEME_DARK_BACKGROUND,
   THEME_LIGHT_BACKGROUND,
   THEME_NAME,
@@ -22,6 +22,8 @@ import {
   put_file_content_in_appropriate_tag,
 } from "../injection/patch";
 import { FetchInternalCss } from "./internal-css/internals";
+import { getUserThemeVarsWithDefaultsAsync } from "./user-vars/handle_user_vars";
+import { apply_theme_mappings, set_theme_property } from "./internal-css/settings/handle-theme-vars-set-reset";
 
 export async function patch_clean_workbench_with_purple_fluent_ui(
   config: Config,
@@ -54,6 +56,7 @@ export async function patch_clean_workbench_with_purple_fluent_ui(
   const patches = await get_all_fluent_ui_patches(config);
   await configure_fluent_ui_js_file_vars(config);
   await apply_patches(config, patches, cleanWorkspaceFile);
+  await apply_theme_mappings(config);
 }
 
 async function get_all_fluent_ui_patches(config: Config) {
@@ -92,8 +95,31 @@ async function get_combined_custom_css_fluent_ui_css(config: Config) {
     config.paths.fluent_ui_css_file,
   ) as unknown as URL;
   const fetched_custom_css = await get_file_content(custom_css_file_url);
-  const fetched_fluent_ui_css = await get_file_content(fluent_ui_css_file_url);
-  const internalFetched = await FetchInternalCss();
+  const fetched_fluent_ui_css = await get_configured_fluent_ui_css_file_vars(
+    config,
+  );
+  let internalFetched = await FetchInternalCss();
+
+  const userVars = await getUserThemeVarsWithDefaultsAsync(config);
+
+  const darkBgColor = userVars["dark-color"];
+  const accent = userVars.accent;
+  const background = userVars.background;
+
+  internalFetched = internalFetched.replaceAll(
+    "THEME_BACKGROUND",
+    background || THEME_BACKGROUND,
+  );
+
+  internalFetched = internalFetched.replaceAll(
+    "THEME_DARK_BACKGROUND",
+    darkBgColor || THEME_DARK_BACKGROUND,
+  );
+
+  internalFetched = internalFetched.replaceAll(
+    "THEME_ACCENT",
+    accent || THEME_ACCENT,
+  );
 
   return `<style> ${fetched_fluent_ui_css} ${internalFetched} ${fetched_custom_css}</style>`;
 }
@@ -107,25 +133,76 @@ async function get_combined_js_patches(config: Config) {
   return `<script>${fetched_custom_js_file} </script>`;
 }
 
+async function get_configured_fluent_ui_css_file_vars(config: Config) {
+  const userVars = await getUserThemeVarsWithDefaultsAsync(config);
+  const accent = userVars.accent;
+  const darkBgColor = userVars["dark-color"];
+  const lightBgColor = userVars["light-color"];
+  const background = userVars.background;
+
+  const fluent_ui_css_file_url = parse_path_to_valid_url(
+    config.paths.fluent_ui_css_file,
+  ) as unknown as URL;
+
+  const fluent_ui_css_dark_vars_file_url = parse_path_to_valid_url(
+    config.paths.fluent_ui_css_dark_vars_file,
+  ) as unknown as URL;
+
+  const fetched_fluent_ui_css = await get_file_content(fluent_ui_css_file_url);
+  const fetched_fluent_ui_css_dark_vars = await get_file_content(
+    fluent_ui_css_dark_vars_file_url,
+  );
+
+  let configured_fluent_ui_css = fetched_fluent_ui_css
+    .toString()
+    .replaceAll("CARD_LIGHT_BG_COLOR", lightBgColor || THEME_LIGHT_BACKGROUND);
+
+  configured_fluent_ui_css = configured_fluent_ui_css.replaceAll(
+    "ACCENT_COLOR",
+    accent || THEME_ACCENT,
+  );
+
+  let fluent_ui_css_dark_vars = fetched_fluent_ui_css_dark_vars
+    .toString()
+    .replaceAll("CARD_DARK_BG_COLOR", darkBgColor || THEME_DARK_BACKGROUND);
+
+  let configured = (
+    configured_fluent_ui_css + fluent_ui_css_dark_vars
+  ).replaceAll("APP_BG", background || THEME_BACKGROUND);
+
+  return configured;
+}
+
 async function configure_fluent_ui_js_file_vars(config: Config) {
-  let fluent_ui_js_file_url = new Url.URL(config.paths.css_file);
+  // await fs.promises.unlink(config.paths.fluent_ui_js_file_compiled);
+
+  let fluent_ui_js_file_url = new Url.URL(config.paths.fluent_ui_js_file);
   fluent_ui_js_file_url = parse_path_to_valid_url(
     config.paths.fluent_ui_js_file,
   ) as unknown as URL;
-  const fetched_fluent_ui_js = await get_file_content(fluent_ui_js_file_url);
 
-  const isCompact = IS_COMPACT;
-  const accent = THEME_ACCENT;
-  const darkBgColor = THEME_DARK_BACKGROUND;
-  const lightBgColor = THEME_LIGHT_BACKGROUND;
+  const fetched_fluent_ui_js = await get_file_content(fluent_ui_js_file_url);
+  const userVars = await getUserThemeVarsWithDefaultsAsync(config);
+  const compact = userVars.compact;
+  const accent = userVars.accent;
+  const darkBgColor = userVars["dark-color"];
+  const lightBgColor = userVars["light-color"];
 
   let jsStringBuffer = fetched_fluent_ui_js.toString();
 
-  jsStringBuffer = jsStringBuffer.replace(/\[IS_COMPACT\]/g, String(isCompact));
-  jsStringBuffer = jsStringBuffer.replace(/\[LIGHT_BG\]/g, `"${lightBgColor}"`);
-  jsStringBuffer = jsStringBuffer.replace(/\[DARK_BG\]/g, `"${darkBgColor}"`);
-  jsStringBuffer = jsStringBuffer.replace(/\[ACCENT\]/g, `"${accent}"`);
-
+  jsStringBuffer = jsStringBuffer.replaceAll(
+    /\[IS_COMPACT\]/g,
+    String(compact),
+  );
+  jsStringBuffer = jsStringBuffer.replaceAll(
+    /\[LIGHT_BG\]/g,
+    `"${lightBgColor}"`,
+  );
+  jsStringBuffer = jsStringBuffer.replaceAll(
+    /\[DARK_BG\]/g,
+    `"${darkBgColor}"`,
+  );
+  jsStringBuffer = jsStringBuffer.replaceAll(/\[ACCENT\]/g, `"${accent}"`);
   await fs.promises.writeFile(
     config.paths.fluent_ui_js_file_compiled,
     jsStringBuffer,

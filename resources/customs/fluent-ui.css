@@ -30,8 +30,7 @@
 
   --accent-disabled: rgba(0, 0, 0, 0.2169);
   --accent-pressed-border: 1px solid rgba(255, 255, 255, 0.08);
-  --active-action-item-bg: var(--card-bg);
-  --activitybar-indicator-bg: #60cdff;
+  --active-action-item-bg: rgba(0, 0, 0, 0.0605);
   --activity-bar-width: 100%;
 
   --depth-2: 0 0 2px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.14);
@@ -49,10 +48,10 @@ Tooltips */
 
   /* The following variables are dynamic */
   --accent: ACCENT_COLOR;
-  --app-bg: rgba(44, 44, 44, 0.85);
+  --app-bg: APP_BG;
   --acccent-pressed-bg: ACCENT_PRESSED_COLOR;
   --accent-hover: ACCENT_HOVER_COLOR;
-  --card-bg: CARD_DARK_BG_COLOR;
+  --card-bg: CARD_LIGHT_BG_COLOR;
   --app-bg-img: url("dummy");
 
   --acrylic-shadow: 0px 32px 64px rgba(0, 0, 0, 0.1876),
@@ -64,8 +63,7 @@ Tooltips */
   --body-bg: rgb(243, 243, 243, 1);
   --body-bg-t: rgb(243, 243, 243, 0);
   --backdrop-filter: blur(12px) saturate(1);
-  --background-color: rgba(0, 0, 0, 0.0578);
-  --card-blend-mode: color, luminosity;
+  --background-color: rgba(255, 255, 255, 0.4);
   --border-color: rgba(0, 0, 0, 0.0578);
   --border-radius: 8px;
   --input-border-radius: 4px;
@@ -76,12 +74,12 @@ Tooltips */
   --card-shadow: var(--depth-4);
 
   --content-height: calc(100% - var(--s3));
-  --context-menu-bg: rgba(32, 32, 32, 0.75);
+  --context-menu-bg: var(--menu-bg);
   --dialog-border: 1px solid rgba(117, 117, 117, 0.4);
   --dialog-shadow: var(--depth-64);
 
   --editor-bg: var(--card-bg);
-  --editor-widget-bg: var(--card-bg);
+  --editor-widget-bg: var(--flyout-bg);
 
   --easing-curve-in: cubic-bezier(0, 0, 0, 1);
   --easing-curve-out: cubic-bezier(1, 0, 1, 1);
@@ -97,19 +95,19 @@ Tooltips */
   --font-display: Segoe UI Variable Display, Segoe WPC, Segoe UI, sans-serif;
   --font-display-semibold: Segoe UI Variable Display Semibold, Segoe WPC,
     Segoe UI, sans-serif;
-  --foreground: #ffffff;
+  --foreground: #000000;
 
-  --hover-bg: var(--card-bg);
-  --list-item-bg: rgba(255, 255, 255, 0.0605);
-  --list-item-fg: #ffffff99;
+  --hover-bg: var(--flyout-bg);
+  --list-item-bg: rgba(0, 0, 0, 0.0373);
+  --list-item-fg: #0000009b;
 
-  --notification-toast-bg: var(--card-bg);
+  --notification-toast-bg: var(--flyout-bg);
   --notification-border-radius: 6px;
   --notification-transition: opacity var(--easing-timing-fast)
       var(--easing-curve-in),
     transform var(--easing-timing-fast) var(--easing-curve-in);
 
-  --quick-input-widget-bg: var(--dark-bg);
+  --quick-input-widget-bg: var(--flyout-bg);
 
   --row-height: var(--s6);
   --transition: var(--easing-timing-normal);
@@ -181,7 +179,7 @@ html {
 }
 
 /* .monaco-editor .overflow-guard {
-    right: var(--s2);
+  right: var(--s2);
 } */
 
 .monaco-diff-editor .original canvas.decorationsOverviewRuler,
@@ -256,7 +254,7 @@ html {
 }
 
 /* .tabs-container {
-    height: 32px !important;
+  height: 32px !important;
 } */
 
 .tabs-container.has-text {
@@ -511,10 +509,10 @@ html {
 }
 
 /* .monaco-workbench .part.panel .pane-body.integrated-terminal .terminal-outer-container,
-  .xterm-viewport,
-  .xterm-link-layer,
-  .monaco-workbench .editor-instance .xterm-viewport,
-  .monaco-workbench .pane-body.integrated-terminal .xterm-viewport,  */
+.xterm-viewport,
+.xterm-link-layer,
+.monaco-workbench .editor-instance .xterm-viewport,
+.monaco-workbench .pane-body.integrated-terminal .xterm-viewport,  */
 .terminal {
   background: var(--card-bg) !important;
 }
@@ -741,11 +739,11 @@ html {
 }
 
 /* .monaco-workbench .monaco-list .monaco-list-row .monaco-highlighted-label .highlight {
-    color: var(--acccent-pressed-bg) !important;
+  color: var(--acccent-pressed-bg) !important;
 }
 
 .monaco-workbench .monaco-list .monaco-list-row.focused .monaco-highlighted-label .highlight {
-    color: var(--accent) !important;
+  color: var(--accent) !important;
 } */
 
 .monaco-select-box-dropdown-container
