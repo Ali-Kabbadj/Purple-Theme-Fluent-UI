@@ -3,7 +3,7 @@
   "displayName": "Theme Editor Pro",
   "publisher": "Ali-Kabbadj",
   "description": "An extention that comes with a defautl purple theme, adds a section to the sidebar for easy access to enabling/disabling features, direct open of custom css and js, live hot reload, focused on ease of use and user experience, the idea is to have an all in one sidebar section to edit the theme and prompts the user to hot reload as soon as a change in the custom css or js is detected.",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.100.0"
   },
