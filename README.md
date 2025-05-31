@@ -26,7 +26,12 @@ Transform your coding environment with real-time customization capabilities and 
 
 ---
 
-![Video](screenshots/video.mp4)
+
+
+https://github.com/user-attachments/assets/75011b00-d047-42d5-96e5-4dfe4e34db31
+
+
+
 
 |                                                                         |                                                                         |
 | :---------------------------------------------------------------------: | :---------------------------------------------------------------------: |
