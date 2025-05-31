@@ -1,19 +1,34 @@
 import { Config } from "./../config/config";
 import path from "path";
-import fs from "fs";
+import fs, { constants } from "fs";
 import * as Url from "url";
 import {
   get_file_content,
   parse_path_to_valid_url,
 } from "./lib/path_url_helpers";
+import { create_clean_workspace_backup } from "./unpatch/backup";
+import { restore_workspace_to_clean } from "./unpatch/restore";
 
 export async function patch_clean_workbench(config: Config) {
+  //first we check if there is a backup file, if so we restore to default
   const cleanWorkspaceFilePath = path.join(
     config.paths.vs_code_base,
     "electron-sandbox",
     "workbench",
     `workbench.html.bak`,
   );
+  try {
+    await fs.promises.access(
+      cleanWorkspaceFilePath,
+      constants.R_OK | constants.W_OK,
+    );
+    // if no error -> clean backup exists -> restore clean
+    await restore_workspace_to_clean(config);
+  } catch {
+    // error -> no clean file -> we just catch it and continue
+  }
+  await create_clean_workspace_backup(config);
+
   const cleanWorkspaceFile = await fs.promises.readFile(
     cleanWorkspaceFilePath,
     "utf-8",
@@ -67,4 +82,3 @@ export async function put_file_content_in_appropriate_tag(file_path: string) {
     return `<script>${fetched}</script>`;
   }
 }
-

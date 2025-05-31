@@ -1,0 +1,11 @@
+.monaco-workbench
+  .pane-body.integrated-terminal
+  .terminal-wrapper:not(.fixed-dims)
+  .xterm-viewport,
+.monaco-workbench
+  .terminal-editor
+  .terminal-wrapper:not(.fixed-dims)
+  .xterm-viewport {
+  right: 14px;
+  background-color: red !important;
+}

@@ -83,8 +83,6 @@ export class Watcher implements WatcherInterface {
         if (config.states.is_purple_theme_enabled) {
           await patch_clean_workbench_with_purple_fluent_ui(config);
         } else if (config.states.is_css_js_injection_enabled) {
-          await restore_workspace_to_clean(config);
-          await create_clean_workspace_backup(config);
           await patch_clean_workbench(config);
         }
         await prompt_restart("Detected CSS file change");
@@ -103,8 +101,6 @@ export class Watcher implements WatcherInterface {
         if (config.states.is_purple_theme_enabled) {
           await patch_clean_workbench_with_purple_fluent_ui(config);
         } else if (config.states.is_css_js_injection_enabled) {
-          await restore_workspace_to_clean(config);
-          await create_clean_workspace_backup(config);
           await patch_clean_workbench(config);
         }
         await prompt_restart("Detected JS file change");

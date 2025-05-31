@@ -102,7 +102,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           // Execute enable/disable command based on checkbox state
           message.value
             ? (async () => {
-                await create_clean_workspace_backup(this._config);
                 await patch_clean_workbench(this._config);
                 await prompt_restart(
                   "CSS/JS injection complete. Restart to finalize.",
