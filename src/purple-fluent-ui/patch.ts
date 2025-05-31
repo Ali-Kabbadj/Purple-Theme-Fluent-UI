@@ -168,15 +168,17 @@ async function get_configured_fluent_ui_css_file_vars(config: Config) {
     .toString()
     .replaceAll("CARD_DARK_BG_COLOR", darkBgColor || THEME_DARK_BACKGROUND);
 
-  let configured = (
-    configured_fluent_ui_css + fluent_ui_css_dark_vars
-  ).replaceAll("APP_BG", background || THEME_BACKGROUND);
+  let configured = (configured_fluent_ui_css + fluent_ui_css_dark_vars)
+    .replaceAll("APP_BG", background || THEME_BACKGROUND)
+    .replaceAll("THEME_BACKGROUND", background || THEME_BACKGROUND);
+
+
 
   return configured;
 }
 
 async function configure_fluent_ui_js_file_vars(config: Config) {
-  // await fs.promises.unlink(config.paths.fluent_ui_js_file_compiled);
+  await fs.promises.unlink(config.paths.fluent_ui_js_file_compiled);
 
   let fluent_ui_js_file_url = new Url.URL(config.paths.fluent_ui_js_file);
   fluent_ui_js_file_url = parse_path_to_valid_url(
