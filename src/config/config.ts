@@ -87,10 +87,7 @@ export class Config implements ConfigInterface {
       workbench_html_file: tempWorkbenchHtmlFile,
     };
     this.states = {
-      is_purple_theme_enabled:
-        vscode.workspace
-          .getConfiguration("workbench")
-          .get<string>("colorTheme") === THEME_NAME,
+      is_purple_theme_enabled: false,
       is_css_js_injection_enabled: false,
     };
     this.extention_uri = tempExtentionUri;
@@ -98,6 +95,10 @@ export class Config implements ConfigInterface {
 
   public set_is_css_js_injection_enabled(isEnabled: boolean) {
     this.states.is_css_js_injection_enabled = isEnabled;
+  }
+
+  public set_is_purple_theme_enabled(isEnabled: boolean) {
+    this.states.is_purple_theme_enabled = isEnabled;
   }
 
   private get_injectable_file_path(

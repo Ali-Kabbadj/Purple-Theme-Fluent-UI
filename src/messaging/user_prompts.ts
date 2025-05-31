@@ -15,8 +15,6 @@ export async function prompt_restart(message: string) {
 }
 
 export async function prompt_full_restart(message: string) {
-  console.log("we are here");
-
   // Try multiple approaches to ensure the message gets through
 
   // Approach 1: Use status bar message (always visible)
@@ -29,7 +27,7 @@ export async function prompt_full_restart(message: string) {
   statusBarItem.command = "workbench.action.reloadWindow";
   statusBarItem.show();
 
-  // Approach 2: Try the information message with a longer delay
+  //  the information message with a longer delay
   setTimeout(async () => {
     try {
       const choice = await vscode.window.showInformationMessage(
@@ -53,7 +51,7 @@ export async function prompt_full_restart(message: string) {
       console.error("Information message failed:", error);
       // Keep status bar item as fallback
     }
-  }, 1000);
+  }, 650);
 
   // Approach 3: Use output channel as backup notification
   const outputChannel = vscode.window.createOutputChannel("Theme Editor Pro");

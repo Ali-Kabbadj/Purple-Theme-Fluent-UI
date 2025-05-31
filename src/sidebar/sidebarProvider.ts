@@ -2,8 +2,6 @@ import path from "path";
 import * as vscode from "vscode";
 import { Config } from "../config/config";
 import * as fs from "fs";
-import { create_clean_workspace_backup } from "../injection/unpatch/backup";
-import { config } from "process";
 import { patch_clean_workbench } from "../injection/patch";
 import { restore_workspace_to_clean } from "../injection/unpatch/restore";
 import {

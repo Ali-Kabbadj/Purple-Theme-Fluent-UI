@@ -2,7 +2,7 @@ import { Config } from "../config/config";
 import { patch_clean_workbench } from "../injection/patch";
 import { create_clean_workspace_backup } from "../injection/unpatch/backup";
 import { restore_workspace_to_clean } from "../injection/unpatch/restore";
-import { prompt_restart } from "../messaging/user_prompts";
+import { prompt_full_restart, prompt_restart } from "../messaging/user_prompts";
 import { patch_clean_workbench_with_purple_fluent_ui } from "../purple-fluent-ui/patch";
 import { WatcherInterface } from "./lib/interfaces";
 import * as fs from "fs";
@@ -11,6 +11,9 @@ import * as vscode from "vscode";
 export class Watcher implements WatcherInterface {
   private config: Config;
   private current_theme_json_file_changed_watcher: fs.FSWatcher | null = null;
+  // debounce timers
+  private cssDebounceTimeout: NodeJS.Timeout | null = null;
+  private jsDebounceTimeout: NodeJS.Timeout | null = null;
 
   constructor(config: Config) {
     this.config = config;
@@ -61,6 +64,7 @@ export class Watcher implements WatcherInterface {
           config.paths.current_theme_json,
           { encoding: "utf-8" },
           async (eventType, filename) => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             await prompt_restart(
               `Detected Theme Json change in file ${filename}`,
             );
@@ -77,15 +81,21 @@ export class Watcher implements WatcherInterface {
       config.paths.css_file,
       { encoding: "utf-8" },
       async (eventType, filename) => {
-        console.log(
-          `[custom_css_file_changed_watcher] (${filename}) changed (${eventType})`,
-        );
-        if (config.states.is_purple_theme_enabled) {
-          await patch_clean_workbench_with_purple_fluent_ui(config);
-        } else if (config.states.is_css_js_injection_enabled) {
-          await patch_clean_workbench(config);
+        // Clear existing timeout
+        if (this.cssDebounceTimeout) {
+          clearTimeout(this.cssDebounceTimeout);
         }
-        await prompt_restart("Detected CSS file change");
+
+        // Set new timeout - only execute after 500ms of no changes
+        this.cssDebounceTimeout = setTimeout(async () => {
+          if (config.states.is_purple_theme_enabled) {
+            await patch_clean_workbench_with_purple_fluent_ui(config);
+          } else if (config.states.is_css_js_injection_enabled) {
+            await patch_clean_workbench(config);
+          }
+          console.log("prompting..");
+          await prompt_full_restart("Detected CSS file change");
+        }, 500);
       },
     );
   }
@@ -95,15 +105,23 @@ export class Watcher implements WatcherInterface {
       config.paths.js_file,
       { encoding: "utf-8" },
       async (eventType, filename) => {
-        console.log(
-          `[custom_js_file_changed_watcher] (${filename}) changed (${eventType})`,
-        );
-        if (config.states.is_purple_theme_enabled) {
-          await patch_clean_workbench_with_purple_fluent_ui(config);
-        } else if (config.states.is_css_js_injection_enabled) {
-          await patch_clean_workbench(config);
+        // Clear existing timeout
+        if (this.jsDebounceTimeout) {
+          clearTimeout(this.jsDebounceTimeout);
         }
-        await prompt_restart("Detected JS file change");
+
+        // Set new timeout - only execute after 500ms of no changes
+        this.jsDebounceTimeout = setTimeout(async () => {
+          if (config.states.is_purple_theme_enabled) {
+            await patch_clean_workbench_with_purple_fluent_ui(config);
+          } else if (
+            config.states.is_css_js_injection_enabled &&
+            !config.states.is_purple_theme_enabled
+          ) {
+            await patch_clean_workbench(config);
+          }
+          await prompt_full_restart("Detected JS file change");
+        }, 500);
       },
     );
   }
