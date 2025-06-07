@@ -56,8 +56,8 @@ export async function patch_clean_workbench_with_purple_fluent_ui(
     cleanWorkspaceFilePath,
     "utf-8",
   );
-  const patches = await get_all_fluent_ui_patches(config);
   await configure_fluent_ui_js_file_vars(config);
+  const patches = await get_all_fluent_ui_patches(config);
   await apply_patches(config, patches, cleanWorkspaceFile);
   return;
 }
@@ -172,13 +172,16 @@ async function get_configured_fluent_ui_css_file_vars(config: Config) {
     .replaceAll("APP_BG", background || THEME_BACKGROUND)
     .replaceAll("THEME_BACKGROUND", background || THEME_BACKGROUND);
 
-
-
   return configured;
 }
 
 async function configure_fluent_ui_js_file_vars(config: Config) {
-  await fs.promises.unlink(config.paths.fluent_ui_js_file_compiled);
+  try {
+    // if no error -> file found -> we remove it
+    await fs.promises.unlink(config.paths.fluent_ui_js_file_compiled);
+  } catch {
+    // error -> no compiled  file -> we just catch it and continue
+  }
 
   let fluent_ui_js_file_url = new Url.URL(config.paths.fluent_ui_js_file);
   fluent_ui_js_file_url = parse_path_to_valid_url(
